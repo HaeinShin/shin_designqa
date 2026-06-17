@@ -1,0 +1,17 @@
+{
+  "name": "shin-designqa",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "개인용 디자인 QA 하네스 — Figma MCP × Playwright 캡처를 비교해 qa-report.html 생성",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "setup": "npm install && npx playwright install chromium",
+    "capture": "node scripts/capture.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.48.0"
+  }
+}
