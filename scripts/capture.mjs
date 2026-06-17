@@ -48,17 +48,21 @@ try {
   await page.evaluate(async () => {
     const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     const vh = window.innerHeight;
-    // 페이지 수준 스크롤러 후보: 문서 + 뷰포트 절반 이상이며 실제로 더 긴 overflow 컨테이너
-    const scrollers = [document.scrollingElement];
-    for (const el of document.querySelectorAll('*')) {
+    // 페이지 수준 스크롤러 후보: 문서 + 뷰포트 절반 이상이며 실제로 더 긴 overflow 컨테이너.
+    // 단 position:fixed/absolute 는 제외 — 고정 헤더·메뉴 서랍·모달 같은 "오버레이"지 본문 스크롤러가 아니다.
+    const isInFlowScroller = (el) => {
       const cs = getComputedStyle(el);
-      if (
+      const inFlow = cs.position === 'static' || cs.position === 'relative' || cs.position === 'sticky';
+      return (
+        inFlow &&
         /(auto|scroll|overlay)/.test(cs.overflowY) &&
         el.scrollHeight > el.clientHeight + 50 &&
         el.clientHeight >= vh * 0.5
-      ) {
-        scrollers.push(el);
-      }
+      );
+    };
+    const scrollers = [document.scrollingElement];
+    for (const el of document.querySelectorAll('*')) {
+      if (isInFlowScroller(el)) scrollers.push(el);
     }
     // 각 스크롤러를 끝까지 굴려 lazy-load 유발 (최대 60스텝/스크롤러)
     for (const sc of scrollers) {
@@ -85,11 +89,13 @@ try {
 
   // 내부 스크롤 컨테이너 "펼치기": fullPage가 상단만 찍는 문제 해결.
   // 모바일 웹뷰형 페이지는 내부 div가 스크롤되어 body 높이가 viewport 한 칸뿐 → fullPage가 잘린다.
-  // 페이지 수준 스크롤러를 일반 문서 흐름으로 바꿔(높이 잠금/overflow/fixed 해제) 전체가 캡처되게 한다.
+  // html/body 잠금을 풀고, "흐름에 있는" 페이지 스크롤러만 펼친다.
+  // ⚠️ position:fixed/absolute 요소(고정 헤더·메뉴 서랍·모달)는 건드리지 않는다.
+  //    이를 흐름에 끼워 넣으면(예: fixed nav → relative) 콘텐츠와 푸터 사이에 빈 영역이 생겨 캡처가 깨진다.
   const expand = await page.evaluate(() => {
     const vh = window.innerHeight;
     const imp = (el, prop, val) => el.style.setProperty(prop, val, 'important');
-    // html/body 의 높이·overflow 잠금 해제
+    // html/body 의 높이·overflow 잠금 해제 (대부분의 웹뷰형 페이지는 이것만으로 전체가 펼쳐진다)
     for (const el of [document.documentElement, document.body]) {
       imp(el, 'height', 'auto');
       imp(el, 'min-height', '0');
@@ -99,7 +105,9 @@ try {
     let count = 0;
     for (const el of document.querySelectorAll('*')) {
       const cs = getComputedStyle(el);
+      const inFlow = cs.position === 'static' || cs.position === 'relative' || cs.position === 'sticky';
       const isScroller =
+        inFlow &&
         /(auto|scroll|overlay)/.test(cs.overflowY) &&
         el.scrollHeight > el.clientHeight + 50 &&
         el.clientHeight >= vh * 0.5;
@@ -107,8 +115,6 @@ try {
       imp(el, 'height', 'auto');
       imp(el, 'max-height', 'none');
       imp(el, 'overflow', 'visible');
-      // fixed/absolute 스크롤러는 문서 흐름에 안 잡혀 fullPage가 못 본다 → relative 로 흐름 참여
-      if (cs.position === 'fixed' || cs.position === 'absolute') imp(el, 'position', 'relative');
       count += 1;
     }
     void document.body.offsetHeight; // 강제 리플로우
@@ -186,7 +192,7 @@ try {
     : '';
   const expandNote = expand.expanded > 0
     ? ` · 내부 스크롤 컨테이너 ${expand.expanded}개 펼침(전체 높이 ${expand.height}px)`
-    : '';
+    : ` · 전체 높이 ${expand.height}px`;
   console.log(`captured: ${outPrefix}.png + ${outPrefix}-styles.json — ${data.elements.length} elements${note}${expandNote}`);
 } catch (e) {
   await browser?.close().catch(() => {});
