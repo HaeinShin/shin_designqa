@@ -1,0 +1,27 @@
+{
+  "_help": "자주 QA하는 화면의 단축 프리셋. '<이름> QA 해줘'라고 하면 여기 저장된 figma/web/width로 바로 실행. 이름은 부분 일치도 허용(예: '결제창'). 새 화면은 URL 2개를 직접 줘도 됨. 항목 추가/수정은 이 파일을 편집하면 된다.",
+  "presets": {
+    "신맞고스토어": {
+      "label": "한게임 신맞고 스토어",
+      "figma": "https://www.figma.com/design/4sIGuC5YbvOeqx7d6AyvuX/한게임-스토어?node-id=3674-100020",
+      "web": "https://store.hangame.com/shop/MobileNDuelGo",
+      "width": 390,
+      "note": "공개 URL. 페이지가 길고 내부 스크롤 컨테이너 구조 — capture.mjs가 자동 펼침."
+    },
+    "클래식스토어": {
+      "label": "한게임 클래식 스토어",
+      "figma": "https://www.figma.com/design/4sIGuC5YbvOeqx7d6AyvuX/%ED%95%9C%EA%B2%8C%EC%9E%84-%EC%8A%A4%ED%86%A0%EC%96%B4?node-id=5292-66464&t=8LR1fSFs6x6C3P8P-4",
+      "web": "https://store.hangame.com/shop/MobilePokerClassic",
+      "width": 390,
+      "note": "공개 URL. 페이지가 길고 내부 스크롤 컨테이너 구조 — capture.mjs가 자동 펼침."
+    },
+    "한게임스토어홈": {
+      "label": "한게임스토어 홈",
+      "figma": "https://www.figma.com/design/4sIGuC5YbvOeqx7d6AyvuX/%ED%95%9C%EA%B2%8C%EC%9E%84-%EC%8A%A4%ED%86%A0%EC%96%B4?node-id=3960-99014&t=8LR1fSFs6x6C3P8P-4",
+      "web": "https://store.hangame.com/",
+      "width": 390,
+      "note": "공개 URL. Figma 프레임 폭이 390이라 width를 360→390으로 정정."
+    }
+    
+  }
+}
