@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>디자인 QA 런처</title>
+<style>
+  :root { --bg:#0f1115; --card:#1a1d24; --line:#2a2f3a; --txt:#e8eaed; --sub:#9aa0aa; --accent:#ff9f43; --ok:#34c759; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",sans-serif;
+         background:var(--bg); color:var(--txt); display:flex; min-height:100vh; align-items:center; justify-content:center; padding:24px; }
+  .card { width:min(560px,100%); background:var(--card); border:1px solid var(--line); border-radius:16px; padding:28px 26px; }
+  h1 { margin:0 0 4px; font-size:20px; }
+  p.sub { margin:0 0 22px; color:var(--sub); font-size:13px; line-height:1.5; }
+  label { display:block; font-size:13px; color:var(--sub); margin:16px 0 6px; }
+  input { width:100%; padding:11px 13px; border-radius:10px; border:1px solid var(--line); background:#11141a; color:var(--txt); font-size:14px; }
+  input:focus { outline:none; border-color:var(--accent); }
+  .row { display:flex; gap:12px; }
+  .row > div { flex:1; }
+  button { margin-top:22px; width:100%; padding:13px; border:0; border-radius:10px; background:var(--accent); color:#1a1205; font-size:15px; font-weight:700; cursor:pointer; }
+  button:disabled { opacity:.55; cursor:default; }
+  .status { margin-top:18px; font-size:13px; line-height:1.6; min-height:20px; }
+  .status .dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent); margin-right:7px; animation:pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  a.report { display:inline-block; margin-top:10px; color:var(--ok); font-weight:700; text-decoration:none; }
+  .hint { color:#e0683a; }
+  .meta { color:var(--sub); font-size:11px; margin-top:18px; line-height:1.6; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>🎨 디자인 QA</h1>
+    <p class="sub">Figma 프레임과 로컬 웹 화면을 비교해 리포트를 만들어요. URL 두 개를 넣고 버튼을 누르세요.<br>
+      <b>열려 있는 Claude 세션의 감시 루프</b>가 일감을 받아 figma를 읽고 QA를 돌립니다.</p>
+
+    <label>Figma 프레임 URL</label>
+    <input id="figmaUrl" placeholder="https://www.figma.com/design/..." />
+
+    <label>로컬 웹 URL</label>
+    <input id="webUrl" placeholder="http://localhost:3000" />
+
+    <div class="row">
+      <div><label>폭(width, 선택)</label><input id="width" placeholder="자동" inputmode="numeric" /></div>
+      <div><label>scale(선택)</label><input id="scale" placeholder="2" inputmode="numeric" /></div>
+    </div>
+
+    <button id="go">QA 실행</button>
+    <div class="status" id="status"></div>
+
+    <div class="meta">
+      서버는 figma를 직접 읽지 않아요(헤드리스는 OAuth 미인증). figma 읽기는 인증된 Claude 세션이 담당합니다.<br>
+      감시 루프가 꺼져 있으면 "대기 중"에서 멈춰요 — 세션에서 감시를 켜 두세요.
+    </div>
+  </div>
+
+<script>
+const $ = id => document.getElementById(id);
+const LS = 'qa-launcher';
+
+// 최근 입력 복원
+try {
+  const saved = JSON.parse(localStorage.getItem(LS) || '{}');
+  for (const k of ['figmaUrl','webUrl','width','scale']) if (saved[k]) $(k).value = saved[k];
+} catch {}
+
+let polling = null;
+
+async function poll(id) {
+  try {
+    const r = await fetch(`/result?id=${encodeURIComponent(id)}`);
+    const d = await r.json();
+    const res = d.result;
+    if (res && res.status === 'done') {
+      stop();
+      const path = res.report || 'reports/qa-report.html';
+      $('status').innerHTML = `<span style="color:var(--ok)">✓ 완료</span> · 리포트가 준비됐어요.
+        <br><a class="report" href="/${path}" target="_blank">리포트 열기 →</a>`;
+      window.open(`/${path}`, '_blank');
+      return;
+    }
+    if (res && res.status === 'error') {
+      stop();
+      $('status').innerHTML = `<span class="hint">⚠ 오류:</span> ${res.message || '알 수 없는 오류'}`;
+      return;
+    }
+    // 아직 진행 중. 감시 루프가 손도 안 댔으면(=요청이 그대로 오래됨) 힌트.
+    let msg = `<span class="dot"></span>처리 중… (${d.requestStatus})`;
+    if (d.requestStatus === 'pending' && d.requestAgeSec != null && d.requestAgeSec > 25) {
+      msg += `<br><span class="hint">감시 루프가 반응이 없어요. Claude 세션에서 감시가 켜져 있는지 확인하세요.</span>`;
+    }
+    $('status').innerHTML = msg;
+  } catch (e) {
+    $('status').innerHTML = `<span class="hint">서버 연결 끊김:</span> ${e.message}`;
+  }
+}
+
+function stop() { if (polling) { clearInterval(polling); polling = null; } $('go').disabled = false; }
+
+$('go').onclick = async () => {
+  const figmaUrl = $('figmaUrl').value.trim();
+  const webUrl = $('webUrl').value.trim();
+  if (!/^https?:\/\//.test(figmaUrl) || !/^https?:\/\//.test(webUrl)) {
+    $('status').innerHTML = `<span class="hint">figma URL과 웹 URL을 http(s)로 정확히 넣어주세요.</span>`;
+    return;
+  }
+  const payload = { figmaUrl, webUrl, width: $('width').value.trim(), scale: $('scale').value.trim() };
+  localStorage.setItem(LS, JSON.stringify(payload));
+  $('go').disabled = true;
+  $('status').innerHTML = `<span class="dot"></span>일감 전송 중…`;
+  try {
+    const r = await fetch('/run', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || '요청 실패');
+    $('status').innerHTML = `<span class="dot"></span>대기 중… 세션 감시 루프가 곧 집어갈 거예요.`;
+    polling = setInterval(() => poll(d.id), 2000);
+    poll(d.id);
+  } catch (e) {
+    stop();
+    $('status').innerHTML = `<span class="hint">전송 실패:</span> ${e.message}`;
+  }
+};
+</script>
+</body>
+</html>

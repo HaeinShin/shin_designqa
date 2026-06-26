@@ -2,7 +2,7 @@
 <!--
   디자인 QA 리포트 — 고정 템플릿 (Single Source of Truth)
   ⚠️ qa-analyzer 에이전트는 이 파일을 복사해 {{...}} placeholder만 치환한다.
-     CSS·JS·시각비교(스와이프 핸들/오버레이/나란히) 같은 "UI 크롬"은 절대 바꾸지 말 것.
+     CSS·JS·시각비교(스와이프 핸들/오버레이/나란히/줌) 같은 "UI 크롬"은 절대 바꾸지 말 것.
      이미지는 항상 reports/ 기준 상대경로 figma.png / web.png 로 참조한다.
   placeholders:
     {{TITLE_SUFFIX}}    제목 접미(예: 모바일 게임샵 결제창)
@@ -50,10 +50,22 @@
   .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
   .tab{padding:7px 14px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-size:13px;color:#444}
   .tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  /* zoom toolbar (모든 비교 탭 공통) */
+  .zoombar{display:flex;align-items:center;gap:6px;justify-content:center;margin:0 0 14px}
+  .zb{min-width:30px;height:30px;padding:0 10px;border:1px solid var(--line);background:#fff;border-radius:7px;
+      cursor:pointer;font-size:14px;color:#333;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+  .zb:hover{background:#f3f3f3}
+  .zb.seg{font-size:12.5px}
+  .zb.seg.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .zlevel{min-width:50px;text-align:center;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .zsep{width:1px;height:18px;background:var(--line);margin:0 4px}
   .pane{display:none}
-  .pane.active{display:block}
-  .stage{position:relative;width:360px;max-width:100%;margin:0 auto;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
-  .stage img{display:block;width:360px;max-width:100%}
+  .pane.active{display:block;overflow-x:auto}
+  .stage{position:relative;width:var(--stage-w,360px);margin:0 auto;border:1px solid var(--line);
+         border-radius:8px;overflow:hidden;background:#fff}
+  .stage img{display:block;width:100%}
+  .visual.zoomed .stage{margin-left:0;margin-right:0}
+  .visual.zoomed .side{justify-content:flex-start}
   /* swipe (드래그 핸들) */
   .swipe{user-select:none}
   .swipe .over{position:absolute;inset:0}
@@ -65,8 +77,12 @@
   .swipe .swlbl{position:absolute;top:8px;font-size:11px;background:rgba(0,0,0,.55);color:#fff;padding:2px 7px;border-radius:6px;z-index:4}
   .swipe .swlbl.l{left:8px} .swipe .swlbl.r{right:8px}
   /* overlay */
+  .ovctl{display:flex;align-items:center;gap:10px;justify-content:center;margin:0 0 12px}
+  .ovctl .ovlbl{font-size:13px;font-weight:600;color:#333;white-space:nowrap}
+  .ovctl input{flex:0 1 260px}
+  .ovctl .ovends{font-size:11.5px;color:var(--muted);white-space:nowrap}
   .ov-top{position:absolute;inset:0}
-  .opacity input{width:360px;max-width:100%;display:block;margin:12px auto 0}
+  .ov-top img{display:block;width:100%;opacity:.5}
   /* side by side */
   .side{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
   .side figure{margin:0}
@@ -108,6 +124,16 @@
     <div class="tab" data-pane="side">나란히 보기</div>
   </div>
 
+  <!-- 줌 툴바 (모든 비교 탭 공통) -->
+  <div class="zoombar" role="group" aria-label="확대·축소">
+    <button type="button" class="zb" data-z="out" aria-label="축소" title="축소">−</button>
+    <span class="zlevel" id="zLevel">맞춤</span>
+    <button type="button" class="zb" data-z="in" aria-label="확대" title="확대">＋</button>
+    <span class="zsep"></span>
+    <button type="button" class="zb seg" data-z="fit" title="화면 폭에 맞춤">맞춤</button>
+    <button type="button" class="zb seg" data-z="100" title="실제 크기(1:1)">100%</button>
+  </div>
+
   <!-- swipe -->
   <div class="pane active" id="swipe">
     <div class="stage swipe" id="swEl">
@@ -123,13 +149,16 @@
   </div>
 
   <!-- overlay -->
-  <div class="pane opacity" id="overlay">
+  <div class="pane" id="overlay">
+    <div class="ovctl">
+      <span class="ovlbl">투명도 조절</span>
+      <input type="range" min="0" max="100" value="50" id="ovRange" aria-label="Figma 투명도">
+      <span class="ovends">0 웹 · 100 Figma</span>
+    </div>
     <div class="stage">
       <img src="web.png" alt="웹">
-      <div class="ov-top" id="ovTop"><img src="figma.png" alt="Figma" style="width:360px;max-width:100%;display:block;opacity:.5"></div>
+      <div class="ov-top" id="ovTop"><img src="figma.png" alt="Figma"></div>
     </div>
-    <input type="range" min="0" max="100" value="50" id="ovRange">
-    <p class="hint">Figma를 웹 위에 겹쳐 <b>투명도</b>를 조절합니다. 요소 위치·정렬 어긋남을 확인하기 좋습니다. (0 = 웹만 / 100 = Figma만)</p>
   </div>
 
   <!-- side -->
@@ -138,7 +167,7 @@
       <figure><div class="stage"><img src="figma.png" alt="Figma"></div><figcaption>Figma 기준 ({{FIGMA_CAPTION}})</figcaption></figure>
       <figure><div class="stage"><img src="web.png" alt="웹"></div><figcaption>웹 구현 ({{WEB_CAPTION}})</figcaption></figure>
     </div>
-    <p class="hint">두 화면을 같은 표시 폭(360px)으로 정렬했습니다.</p>
+    <p class="hint">두 화면을 같은 표시 폭으로 정렬했습니다. 위 <b>확대·축소</b>로 1:1(100%)까지 키워 볼 수 있습니다.</p>
   </div>
 </div>
 
@@ -204,6 +233,48 @@
     var or=document.getElementById('ovRange'), ot=document.getElementById('ovTop').querySelector('img');
     if(!or) return;
     or.addEventListener('input',function(){ ot.style.opacity=this.value/100; });
+  })();
+  // zoom (확대·축소) — 모든 비교 탭 공통, --stage-w 로 표시 폭 제어
+  (function(){
+    var visual=document.querySelector('.visual'); if(!visual) return;
+    var webImg=visual.querySelector('img[src="web.png"]');
+    var levelEl=document.getElementById('zLevel');
+    var segFit=visual.querySelector('[data-z="fit"]'), seg100=visual.querySelector('[data-z="100"]');
+    var natW=0, fitW=0, curW=0, mode='fit';
+    function paneW(){
+      var p=visual.querySelector('.pane.active');
+      return Math.max(200,((p&&p.clientWidth)||visual.clientWidth)-2);
+    }
+    function computeFit(){ fitW=Math.min(natW||360, paneW()); }
+    function label(){
+      if(levelEl) levelEl.textContent = natW ? Math.round(curW/natW*100)+'%' : '맞춤';
+      if(segFit) segFit.classList.toggle('on', mode==='fit');
+      if(seg100) seg100.classList.toggle('on', mode==='full');
+    }
+    function apply(w){
+      curW=Math.max(140, Math.min((natW||360)*3, Math.round(w)));
+      visual.style.setProperty('--stage-w', curW+'px');
+      visual.classList.toggle('zoomed', curW > paneW()+1);
+      label();
+    }
+    function setMode(m){
+      mode=m;
+      if(m==='fit'){ computeFit(); apply(fitW); }
+      else if(m==='full'){ apply(natW); }
+    }
+    function init(){ natW=webImg.naturalWidth||360; setMode('fit'); }
+    if(webImg && webImg.complete && webImg.naturalWidth) init();
+    else if(webImg) webImg.addEventListener('load', init);
+    visual.querySelectorAll('[data-z]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var z=b.dataset.z;
+        if(z==='in'){ mode='custom'; apply(curW*1.25); }
+        else if(z==='out'){ mode='custom'; apply(curW*0.8); }
+        else if(z==='fit'){ setMode('fit'); }
+        else if(z==='100'){ setMode('full'); }
+      });
+    });
+    window.addEventListener('resize',function(){ if(mode==='fit'){ computeFit(); apply(fitW); } });
   })();
 </script>
 </body>

@@ -18,7 +18,7 @@
   - `download_assets`(임시 URL 반환) → `curl -o reports/figma.png "<url>"` (기준 이미지)
 - **`qa-analyzer` 서브에이전트**: MCP 미사용. 전달받은 Figma 파일 + 웹 캡처(직접 실행)로 **500요소 비교·리포트 작성**만 하고 **짧은 요약만** 반환.
 - 메인에서 `web-styles.json`(500요소)·캡처 스크린샷을 **직접 읽지 말 것.**
-- **반응형 QA**: 메인이 브레이크포인트별 Figma 데이터를 저장한 뒤 `qa-analyzer`를 **병렬 호출** → 각자 리포트 작성 → 메인은 작은 합본 인덱스만 만든다.
+- **반응형 QA**: 메인이 브레이크포인트별 Figma 데이터를 저장한 뒤 `qa-analyzer`를 **병렬 호출** → 각자 리포트 작성 → 메인은 작은 합본 인덱스만 만든다.ㅇ
 
 ## 원칙 (가볍게·심플하게)
 - 비교/분석은 **코드 diff 엔진이 아니라 Claude가 직접** 판단한다.
@@ -35,6 +35,10 @@
 - 웹 캡처: `node scripts/capture.mjs "<url>" reports/web [width] [scale]`
   - 종료 코드: `0`성공 · `1`URL/인자 오류 · `2`접속 실패(서버 미기동) · `3`타임아웃 · `4`기타
   - dev 서버 HMR 때문에 `networkidle` 대신 `domcontentloaded` 기준으로 동작한다.
+- **버튼으로 QA(웹 런처)**: `npm run launcher` → http://localhost:4567 에서 Figma·웹 URL 입력 후 버튼.
+  - 동작 원리: 런처 서버(`scripts/qa-server.mjs`, Node 내장 http만 사용)는 figma를 **직접 안 읽는다**. 버튼이 `reports/_qa_request.json`(일감)을 쓰면, **열려 있는 인터랙티브 세션**의 감시 루프가 그걸 집어 design-qa를 돌리고 `reports/_qa_result.json`을 남긴다 → 런처가 리포트를 연다.
+  - 세션에서 감시 켜기: `/loop 30s /qa-watch` (figma MCP는 인터랙티브 세션에만 인증돼 있어, QA 실행 주체는 반드시 이 세션이다).
+  - **왜 헤드리스 자동화는 안 되나**: `claude -p`(백그라운드) 세션의 figma MCP는 OAuth 미인증 상태로 떠서 `authenticate` 두 개만 노출한다(토큰은 macOS Keychain·인터랙티브 전용). 그래서 "버튼→백그라운드가 알아서"는 불가, "버튼→열린 세션이 처리"만 가능.
 
 ## 환경
 - macOS (`open` 명령으로 리포트 자동 열기), Node 18+ 필요.
@@ -42,8 +46,10 @@
 
 ## 구조
 - `.claude/skills/design-qa/` — QA 오케스트레이션(입력 수집 → 위임 → 요약 전달)
+- `.claude/skills/qa-watch/` — 웹 런처 일감(`_qa_request.json`)을 집어 design-qa를 돌리는 감시 틱(`/loop`로 반복)
 - `.claude/agents/qa-analyzer.md` — 비교·분석 워커(무거운 데이터 전담, 짧은 요약 반환)
 - `scripts/capture.mjs` — Playwright 캡처
+- `scripts/qa-server.mjs` + `scripts/launcher.html` — 웹 런처(버튼으로 QA 트리거)
 - `reports/` — 산출물: `figma-code.txt`/`figma-meta.xml`/`figma-tokens.json`/`figma.png`(메인 덤프), `web.png`/`web-styles.json`(캡처), `qa-report.html`/브레이크포인트별 리포트
 - `README.md` — 사람용 사용법(셋업·예시·문제 해결)
 - `기획서.md` — 제품 기획
