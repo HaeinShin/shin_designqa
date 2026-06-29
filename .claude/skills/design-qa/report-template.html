@@ -5,15 +5,16 @@
      CSS·JS·시각비교(스와이프 핸들/오버레이/나란히/줌) 같은 "UI 크롬"은 절대 바꾸지 말 것.
      이미지는 항상 reports/ 기준 상대경로 figma.png / web.png 로 참조한다.
   placeholders:
-    {{TITLE_SUFFIX}}    제목 접미(예: 모바일 게임샵 결제창)
-    {{META_LINE}}       대상/웹/폭/높이/일시 한 줄 (HTML 허용)
-    {{CHIPS}}           요약 칩 span 들
-    {{SUMMARY}}         핵심 요약 문단(들) + .caveats 배지
-    {{FIGMA_CAPTION}}   나란히 보기 Figma 캡션(예: 720×1906 = 360pt @2x)
-    {{WEB_CAPTION}}     나란히 보기 웹 캡션(예: 360px @2x · 전체 967px)
-    {{DIFF_ROWS}}       차이 목록 <tr> 행들
-    {{NEAR_MATCH_LIST}} 거의 일치 <li> 항목들
-    {{CHECK_LIST}}      확인 필요 <li> 항목들
+    {{TITLE_SUFFIX}}       제목 접미(예: 모바일 게임샵 결제창)
+    {{META_LINE}}          대상/웹/폭/높이/일시 한 줄 (HTML 허용)
+    {{CHIPS}}              요약 칩 span 들
+    {{SUMMARY}}            핵심 요약 문단(들) + .caveats 배지
+    {{FIGMA_CAPTION}}      나란히 보기 Figma 캡션(예: 720×1906 = 360pt @2x)
+    {{WEB_CAPTION}}        나란히 보기 웹 캡션(예: 360px @2x · 전체 967px)
+    {{DIFF_SECTION_STYLE}} 차이 목록 섹션 style 속성값. full 모드: 빈 문자열. visual 모드: "display:none"
+    {{DIFF_ROWS}}          차이 목록 <tr> 행들 (visual 모드: 빈 문자열)
+    {{NEAR_MATCH_LIST}}    거의 일치 <li> 항목들
+    {{CHECK_LIST}}         확인 필요 <li> 항목들
 -->
 <html lang="ko">
 <head>
@@ -22,47 +23,50 @@
 <title>디자인 QA 리포트 · {{TITLE_SUFFIX}}</title>
 <style>
   :root{
-    --bg:#fafafa; --card:#fff; --line:#e7e7e7; --ink:#242424; --muted:#6b6b6b;
-    --amber:#b87400; --amber-bg:#fff6e6; --gray:#5c5c5c; --gray-bg:#f2f2f2;
-    --blue:#2f6fb0; --blue-bg:#eef4fb; --ok:#3b8c5a; --ok-bg:#eef7f1;
-    --p1:#fa6e00; --swipe:#ff7a59;
+    --bg:#010102; --card:#0f1011; --surface2:#141516; --line:#23252a; --line-strong:#34343a;
+    --ink:#f7f8f8; --ink-muted:#d0d6e0; --muted:#8a8f98;
+    --amber:#b87a2a; --amber-bg:rgba(184,122,42,.12);
+    --gray:#8a8f98; --gray-bg:#141516;
+    --blue:#5e6ad2; --blue-bg:rgba(94,106,210,.12);
+    --ok:#27a644; --ok-bg:rgba(39,166,68,.12);
+    --primary:#5e6ad2; --swipe:#5e6ad2;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Apple SD Gothic Neo",sans-serif;
        background:var(--bg);color:var(--ink);line-height:1.55;font-size:14px}
   .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 80px}
   header h1{font-size:22px;margin:0 0 6px}
   .meta{color:var(--muted);font-size:13px;margin-bottom:14px}
   .meta b{color:var(--ink);font-weight:600}
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
-  .chip{padding:5px 11px;border-radius:999px;font-size:12.5px;border:1px solid var(--line);background:#fff}
-  .chip.amber{background:var(--amber-bg);border-color:#f0dcb4;color:var(--amber)}
-  .chip.gray{background:var(--gray-bg);color:#444}
-  .chip.blue{background:var(--blue-bg);border-color:#cfe0f0;color:var(--blue)}
-  .chip.ok{background:var(--ok-bg);border-color:#cce6d6;color:var(--ok)}
+  .chip{padding:5px 11px;border-radius:9999px;font-size:12.5px;border:1px solid var(--line);background:var(--card)}
+  .chip.amber{background:var(--amber-bg);border-color:rgba(184,122,42,.3);color:var(--amber)}
+  .chip.gray{background:var(--gray-bg);color:var(--muted)}
+  .chip.blue{background:var(--blue-bg);border-color:rgba(94,106,210,.3);color:var(--blue)}
+  .chip.ok{background:var(--ok-bg);border-color:rgba(39,166,68,.3);color:var(--ok)}
   .summary{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:8px 0 6px}
   .summary p{margin:0 0 6px}
   .caveats{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-  .badge{font-size:11.5px;padding:3px 9px;border-radius:6px;background:#f0f0f0;color:#555;border:1px solid #e3e3e3}
+  .badge{font-size:11.5px;padding:3px 9px;border-radius:6px;background:var(--surface2);color:var(--muted);border:1px solid var(--line)}
   h2{font-size:17px;margin:34px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
   /* visual compare */
   .visual{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:10px}
   .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
-  .tab{padding:7px 14px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-size:13px;color:#444}
-  .tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .tab{padding:7px 14px;border:1px solid var(--line);background:var(--card);border-radius:8px;cursor:pointer;font-size:13px;color:var(--ink-muted)}
+  .tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
   /* zoom toolbar (모든 비교 탭 공통) */
   .zoombar{display:flex;align-items:center;gap:6px;justify-content:center;margin:0 0 14px}
-  .zb{min-width:30px;height:30px;padding:0 10px;border:1px solid var(--line);background:#fff;border-radius:7px;
-      cursor:pointer;font-size:14px;color:#333;line-height:1;display:inline-flex;align-items:center;justify-content:center}
-  .zb:hover{background:#f3f3f3}
+  .zb{min-width:30px;height:30px;padding:0 10px;border:1px solid var(--line);background:var(--card);border-radius:7px;
+      cursor:pointer;font-size:14px;color:var(--ink);line-height:1;display:inline-flex;align-items:center;justify-content:center}
+  .zb:hover{background:var(--surface2)}
   .zb.seg{font-size:12.5px}
-  .zb.seg.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .zb.seg.on{background:var(--primary);color:#fff;border-color:var(--primary)}
   .zlevel{min-width:50px;text-align:center;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
   .zsep{width:1px;height:18px;background:var(--line);margin:0 4px}
   .pane{display:none}
   .pane.active{display:block;overflow-x:auto}
   .stage{position:relative;width:var(--stage-w,360px);margin:0 auto;border:1px solid var(--line);
-         border-radius:8px;overflow:hidden;background:#fff}
+         border-radius:8px;overflow:hidden;background:var(--card)}
   .stage img{display:block;width:100%}
   .visual.zoomed .stage{margin-left:0;margin-right:0}
   .visual.zoomed .side{justify-content:flex-start}
@@ -78,7 +82,7 @@
   .swipe .swlbl.l{left:8px} .swipe .swlbl.r{right:8px}
   /* overlay */
   .ovctl{display:flex;align-items:center;gap:10px;justify-content:center;margin:0 0 12px}
-  .ovctl .ovlbl{font-size:13px;font-weight:600;color:#333;white-space:nowrap}
+  .ovctl .ovlbl{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap}
   .ovctl input{flex:0 1 260px}
   .ovctl .ovends{font-size:11.5px;color:var(--muted);white-space:nowrap}
   .ov-top{position:absolute;inset:0}
@@ -91,18 +95,18 @@
   /* table */
   table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}
   th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-  th{background:#f7f7f7;font-weight:600;font-size:12.5px;color:#555}
+  th{background:var(--surface2);font-weight:600;font-size:12.5px;color:var(--muted)}
   tr:last-child td{border-bottom:none}
-  .loc{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:#444;background:#f4f4f4;padding:1px 5px;border-radius:4px}
+  .loc{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:12px;color:var(--ink-muted);background:var(--surface2);padding:1px 5px;border-radius:4px}
   .deg{white-space:nowrap;font-size:12px;font-weight:600}
   .deg.amber{color:var(--amber)} .deg.gray{color:var(--gray)} .deg.blue{color:var(--blue)}
-  .sec-tag{display:inline-block;font-size:11px;color:#888;margin-top:2px}
+  .sec-tag{display:inline-block;font-size:11px;color:var(--muted);margin-top:2px}
   details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px 16px;margin-top:10px}
   summary{cursor:pointer;padding:10px 0;font-weight:600;font-size:14px}
-  details ul{margin:4px 0 14px;padding-left:18px;color:#444}
+  details ul{margin:4px 0 14px;padding-left:18px;color:var(--ink-muted)}
   details li{margin:3px 0}
   .note{font-size:12.5px;color:var(--muted);margin-top:8px}
-  code{font-family:ui-monospace,Menlo,monospace;background:#f4f4f4;padding:1px 5px;border-radius:4px;font-size:12px}
+  code{font-family:ui-monospace,"SF Mono",Menlo,monospace;background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px}
 </style>
 </head>
 <body>
@@ -171,6 +175,7 @@
   </div>
 </div>
 
+<div style="{{DIFF_SECTION_STYLE}}">
 <!-- ===================== 차이 목록 ===================== -->
 <h2>차이 목록 (크기순)</h2>
 <table>
@@ -182,6 +187,7 @@
   </tbody>
 </table>
 <p class="note">정도 색상 안내 — <span class="deg amber">🟠 주목</span> 우선 검토 / <span class="deg gray">▫️ 미세</span> 넘어가도 무방할 수 있음 / <span class="deg blue">◇ 확인</span> 매칭·기준이 애매해 사람 확인 필요. 합격/불합격 판정이 아닌 우선순위 가이드입니다.</p>
+</div>
 
 <!-- ===================== 거의 일치 ===================== -->
 <details open>

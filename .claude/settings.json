@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Write(reports/**)",
+      "Read(reports/**)",
+      "Read(.claude/**)",
+      "Read(scripts/**)",
+      "Read(presets.json)",
+      "Agent",
+      "Task",
+      "Skill(loop)",
+      "Skill(design-qa)",
+      "Skill(qa-watch)",
+      "Skill(update-config)",
+      "Skill(fewer-permission-prompts)",
+      "mcp__plugin_figma_figma__get_design_context",
+      "mcp__plugin_figma_figma__get_metadata",
+      "mcp__plugin_figma_figma__get_variable_defs",
+      "mcp__plugin_figma_figma__get_screenshot",
+      "mcp__plugin_figma_figma__download_assets",
+      "Bash(node scripts/capture.mjs *)",
+      "Bash(node scripts/qa-server.mjs *)",
+      "Bash(npm run launcher)",
+      "Bash(npm run launcher &)",
+      "Bash(npm run setup)",
+      "Bash(curl -o reports/figma.png *)",
+      "Bash(curl -s -o /dev/null *)",
+      "Bash(open reports/qa-report.html*)",
+      "Bash(open http://localhost:4567*)",
+      "Bash(lsof -ti:4567*)",
+      "Bash(pkill -f qa-server.mjs*)",
+      "Bash(mkdir -p reports)"
+    ]
+  }
+}

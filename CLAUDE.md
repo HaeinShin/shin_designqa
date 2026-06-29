@@ -37,7 +37,7 @@
   - dev 서버 HMR 때문에 `networkidle` 대신 `domcontentloaded` 기준으로 동작한다.
 - **버튼으로 QA(웹 런처)**: `npm run launcher` → http://localhost:4567 에서 Figma·웹 URL 입력 후 버튼.
   - 동작 원리: 런처 서버(`scripts/qa-server.mjs`, Node 내장 http만 사용)는 figma를 **직접 안 읽는다**. 버튼이 `reports/_qa_request.json`(일감)을 쓰면, **열려 있는 인터랙티브 세션**의 감시 루프가 그걸 집어 design-qa를 돌리고 `reports/_qa_result.json`을 남긴다 → 런처가 리포트를 연다.
-  - 세션에서 감시 켜기: `/loop 30s /qa-watch` (figma MCP는 인터랙티브 세션에만 인증돼 있어, QA 실행 주체는 반드시 이 세션이다).
+  - 세션에서 감시 켜기: `/loop 10s /qa-watch` (figma MCP는 인터랙티브 세션에만 인증돼 있어, QA 실행 주체는 반드시 이 세션이다).
   - **왜 헤드리스 자동화는 안 되나**: `claude -p`(백그라운드) 세션의 figma MCP는 OAuth 미인증 상태로 떠서 `authenticate` 두 개만 노출한다(토큰은 macOS Keychain·인터랙티브 전용). 그래서 "버튼→백그라운드가 알아서"는 불가, "버튼→열린 세션이 처리"만 가능.
 
 ## 환경

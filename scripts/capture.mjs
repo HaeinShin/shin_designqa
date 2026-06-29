@@ -6,9 +6,10 @@ import { chromium } from 'playwright';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 
-const MAX_ELEMENTS = 500; // JSON·토큰 폭발 방지 상한
+const MAX_ELEMENTS = 200; // JSON·토큰 폭발 방지 상한 (면적 큰 순 정렬 후 상위 200개로 충분)
 
-const [, , url, outPrefix = 'reports/web', widthArg, scaleArg] = process.argv;
+const [, , url, outPrefix = 'reports/web', widthArg, scaleArg, modeArg] = process.argv;
+const visualOnly = modeArg === 'visual';
 
 if (!url) {
   console.error('usage: node scripts/capture.mjs <url> [outPrefix] [width] [scale]');
@@ -125,6 +126,12 @@ try {
   }
 
   await page.screenshot({ path: `${outPrefix}.png`, fullPage: true });
+
+  if (visualOnly) {
+    await browser.close();
+    console.log(`captured: ${outPrefix}.png (visual-only) · 전체 높이 ${expand.height}px`);
+    process.exit(0);
+  }
 
   // 비교에 의미 있는 요소만 computed style 추출
   const data = await page.evaluate((MAX) => {

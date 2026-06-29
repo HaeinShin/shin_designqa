@@ -8,17 +8,46 @@ description: 웹 런처(scripts/qa-server.mjs)가 남긴 일감 파일(reports/_
 웹 런처 버튼이 만든 일감을 집어 QA를 돌리는 **단발 작업**이다. 루프(`/loop`)가 이 스킬을 주기적으로 호출한다.
 Figma MCP는 **이 인터랙티브 세션에만** 연결돼 있으므로, 헤드리스가 아닌 바로 여기서 figma를 읽어야 한다.
 
+## ⚠️ 무질문 원칙 (가장 중요)
+
+이 틱은 **완전 자동 처리**다. 사용자에게 어떤 것도 묻지 말 것.
+- 입력 확인, 단일/반응형 여부, URL 재확인 — 전부 금지.
+- 오류가 생기면 사용자에게 묻지 말고 `_qa_result.json`에 `status: "error"`로 기록하고 끝낸다.
+
 ## 절차
+
+0. **하트비트 기록** — 매 틱 시작 시 `reports/_loop_heartbeat.json`을 갱신한다(런처가 이 파일로 루프 활성 여부를 판단).
+   - Read `reports/_loop_heartbeat.json` → Edit로 타임스탬프 교체 (예: `{"tick":"2026-06-29T08:00:00Z"}`).
+   - 파일이 없거나 Read 실패 시에는 건너뛴다(하트비트는 non-critical).
+   - **Bash echo 리다이렉트(`echo ... > file`)는 사용하지 않는다** — 퍼미션 허용 목록에 없어 차단될 수 있다.
 
 1. **일감 확인** — `reports/_qa_request.json`을 Read한다(Bash `cat` 가능).
    - 파일이 없거나 JSON 파싱 실패 → **아무것도 하지 말고** "대기 중(요청 없음)"만 한 줄로 보고하고 끝낸다. (루프 비용 최소화)
-   - `status`가 `pending`이 **아니면**(이미 `running`/`done`) → 역시 아무것도 안 하고 "대기 중"으로 끝낸다.
+   - `status`가 `"running"`이면 → **아무 메시지도 출력하지 말고 조용히 종료한다.** (QA 진행 중 — 사용자에게 노이즈 방지. 하트비트는 이미 0단계에서 갱신됐으므로 런처 배지는 초록 유지)
+   - `status`가 `"done"`이면 → 역시 아무것도 안 하고 조용히 종료한다.
 
 2. **선점(중복 실행 방지)** — `pending`이면 즉시 같은 파일을 `status: "running"`으로 덮어쓴다(Write). 그래야 다음 루프 틱이 같은 일감을 다시 잡지 않는다.
 
-3. **QA 실행** — 일감의 `figmaUrl`/`webUrl`/`width`/`scale`을 입력으로 **`design-qa` 스킬을 그대로 따른다.**
-   - `width`/`scale`이 `null`이면 design-qa 기본 규칙대로(폭은 `get_metadata`에서, scale 기본 2).
-   - 단일 모드로 처리한다(런처는 단일 프레임 기준). 리포트는 `reports/qa-report.html`.
+3. **QA 실행** — 일감 JSON에서 `figmaUrl`/`webUrl`/`width`/`scale`/`mode`/`id`를 꺼내 **사용자에게 아무것도 묻지 않고** 아래 순서대로 직접 수행한다. design-qa의 **1단계(입력 수집)는 건너뛴다** — 입력은 이미 확보됐다.
+   - `mode`가 없으면 `"full"`로 간주한다.
+
+   a. **Figma MCP 읽기 (design-qa 2단계에 해당)** — `figmaUrl`에서 `fileKey`/`nodeId`(`-`→`:`) 추출 후:
+
+      **▶ `mode === "visual"` (빠른 시각 비교)** — 2개만 병렬 실행:
+      - `get_metadata` → `reports/figma-meta.xml` 저장 (`width`가 null이면 여기 bounding box 폭 사용)
+      - `download_assets` → 반환 URL을 `curl -o reports/figma.png "<url>"` 로 저장
+      - `reports/figma-code.txt` / `reports/figma-tokens.json` 은 건드리지 않는다(없어도 됨).
+
+      **▶ `mode === "full"` (상세 QA 분석)** — 4개 동시에(병렬로) 실행:
+      - `get_design_context` → `reports/figma-code.txt` 저장
+      - `get_metadata` → `reports/figma-meta.xml` 저장 (`width`가 null이면 여기 bounding box 폭 사용)
+      - `get_variable_defs` → `reports/figma-tokens.json` 저장 (실패해도 계속 진행)
+      - `download_assets` → 반환 URL을 `curl -o reports/figma.png "<url>"` 로 저장 (실패해도 계속 진행)
+
+   b. **qa-analyzer 호출 (design-qa 3-A단계에 해당)** — **단일 모드 고정** (런처는 단일 프레임 기준). 경로 전달:
+      `figmaCodePath=reports/figma-code.txt`, `figmaMetaPath=reports/figma-meta.xml`, `figmaTokensPath=reports/figma-tokens.json`(있으면), `figmaImagePath=reports/figma.png`(없으면 "이미지 없음" 명시), `webUrl`, `width`(null이면 meta에서 추출한 값), `outPrefix=reports/web`, `reportPath=reports/qa-report.html`, **`mode`(visual 또는 full)**
+      - `scale`이 null이면 기본값 2 사용.
+      - 리포트는 `reports/qa-report.html`.
 
 4. **결과 기록** — 끝나면 `reports/_qa_result.json`을 Write한다:
    - 성공: `{ "id": "<일감 id>", "status": "done", "report": "reports/qa-report.html" }`

@@ -70,12 +70,14 @@ const server = createServer(async (req, res) => {
         return send(res, 400, JSON.stringify({ error: 'figmaUrl·webUrl 둘 다 http(s) URL이어야 해요.' }), MIME['.json']);
       }
       const id = `qa_${Date.now()}`;
+      const mode = body.mode === 'visual' ? 'visual' : 'full';
       const request = {
         id,
         figmaUrl,
         webUrl,
         width: Number(body.width) > 0 ? Number(body.width) : null,
         scale: Number(body.scale) > 0 ? Number(body.scale) : null,
+        mode,
         status: 'pending',
         createdAt: new Date().toISOString(),
       };
@@ -83,6 +85,19 @@ const server = createServer(async (req, res) => {
       // 이전 결과는 비워서 폴링이 옛 결과를 집지 않게
       await writeFile(RES_FILE, JSON.stringify({ id, status: 'pending' }, null, 2));
       return send(res, 200, JSON.stringify({ id }), MIME['.json']);
+    }
+
+    // 감시 루프 활성 여부: 하트비트 파일 나이로 판단
+    if (req.method === 'GET' && path === '/loop-status') {
+      try {
+        const hbFile = join(REPORTS, '_loop_heartbeat.json');
+        if (!existsSync(hbFile)) return send(res, 200, JSON.stringify({ active: false }), MIME['.json']);
+        const hb = JSON.parse(await readFile(hbFile, 'utf-8'));
+        const ageSec = (Date.now() - new Date(hb.tick).getTime()) / 1000;
+        return send(res, 200, JSON.stringify({ active: ageSec < 90, ageSec: Math.round(ageSec) }), MIME['.json']);
+      } catch {
+        return send(res, 200, JSON.stringify({ active: false }), MIME['.json']);
+      }
     }
 
     // 결과 폴링: 런처가 호출. 요청/결과 파일을 합쳐 현재 상태를 돌려줌.
