@@ -1,5 +1,5 @@
 // 로컬 웹 화면 캡처 — 스크린샷 + 핵심 요소의 computed style
-// 사용법: node scripts/capture.mjs <url> [outPrefix=reports/web] [width=1440] [scale=2]
+// 사용법: node scripts/capture.mjs <url> [outPrefix=reports/web] [width=1440] [scale=1]
 //
 // 종료 코드: 0=성공, 1=인자/URL 오류, 2=접속 실패, 3=타임아웃, 4=기타 캡처 오류
 import { chromium } from 'playwright';
@@ -27,7 +27,7 @@ try {
 }
 
 const width = Number(widthArg) > 0 ? Number(widthArg) : 1440;
-const scale = Number(scaleArg) > 0 ? Number(scaleArg) : 2;
+const scale = Number(scaleArg) > 0 ? Number(scaleArg) : 1;
 mkdirSync(dirname(outPrefix), { recursive: true });
 
 let browser;
