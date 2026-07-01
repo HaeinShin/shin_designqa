@@ -12,7 +12,8 @@
   .card { width:min(560px,100%); background:var(--card); border:1px solid var(--line); border-radius:16px; padding:28px 26px; }
   h1 { margin:0 0 4px; font-size:20px; font-weight:600; letter-spacing:-0.4px; }
   h1 .h1-icon { font-style:normal; color:var(--sub); margin-right:6px; font-size:16px; vertical-align:middle; position:relative; top:-1px; }
-  p.sub { margin:0 0 22px; color:var(--sub); font-size:13px; line-height:1.5; }
+  p.sub { margin:0 0 18px; color:var(--sub); font-size:13px; line-height:1.5; }
+  hr.section-divider { border:none; border-top:1px solid var(--line); margin:0 0 20px; }
   label { display:block; font-size:13px; color:var(--sub); margin:16px 0 6px; }
   input { width:100%; padding:11px 13px; border-radius:10px; border:1px solid var(--line); background:var(--surface2); color:var(--txt); font-size:14px; }
   input:focus { outline:none; border-color:#5e69d1; }
@@ -57,9 +58,19 @@
   input.optional { border-color:#1e2026; }
   input.optional::placeholder { color:#3a3e48; }
   .dimmed { opacity:.3; pointer-events:none; transition:opacity .2s; }
-  .upload-zone.dimmed { pointer-events:none; }
-  .loop-badge { display:flex; align-items:center; gap:8px; padding:9px 13px; border-radius:8px;
-                background:var(--surface2); border:1px solid var(--line); margin-bottom:18px; font-size:12px; }
+  .upload-zone.dimmed { pointer-events:none; opacity:1; }
+  .upload-zone.dimmed .upload-placeholder,
+  .upload-zone.dimmed .upload-preview { opacity:0.3; }
+  .input-wrap { position:relative; }
+  .input-wrap input { padding-right:32px; }
+  .input-clear { position:absolute; right:9px; top:50%; transform:translateY(-50%);
+                 background:none; border:none; color:var(--sub); cursor:pointer;
+                 font-size:13px; line-height:1; padding:3px 5px; display:none; border-radius:4px; }
+  .input-clear:hover { color:var(--txt); background:var(--line); }
+  .input-wrap.has-value .input-clear { display:block; }
+  .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+  .card-header h1 { margin:0; }
+  .loop-badge { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--sub); flex-shrink:0; background:var(--surface2); padding:4px 10px; border-radius:20px; border:none; }
   .loop-badge .dot-on  { width:8px; height:8px; border-radius:50%; background:var(--ok); flex-shrink:0; }
   .loop-badge .dot-off { width:8px; height:8px; border-radius:50%; background:#e0683a; flex-shrink:0; }
   .loop-badge code { font-family:ui-monospace,"SF Mono",Menlo,monospace; background:var(--card); padding:1px 5px; border-radius:4px;
@@ -68,20 +79,29 @@
 </head>
 <body>
   <div class="card">
-    <h1><em class="h1-icon">◈</em>디자인 QA</h1>
-    <p class="sub">Figma 프레임과 로컬 웹 화면을 비교해 리포트를 만들어요. URL 두 개를 넣고 버튼을 누르세요.</p>
-    <div class="loop-badge" id="loopBadge">
-      <span class="dot-off" id="loopDot"></span>
-      <span id="loopMsg">감시 루프 확인 중…</span>
+    <div class="card-header">
+      <h1>디자인 QA</h1>
+      <div class="loop-badge" id="loopBadge">
+        <span class="dot-off" id="loopDot"></span>
+        <span id="loopMsg">감시 루프 확인 중…</span>
+      </div>
     </div>
+    <p class="sub">Figma 프레임과 로컬 웹 화면을 비교해 리포트를 만들어요. URL 두 개를 넣고 버튼을 누르세요.</p>
+    <hr class="section-divider">
 
     <label>Figma 프레임 URL</label>
-    <input id="figmaUrl" placeholder="https://www.figma.com/design/..." />
+    <div class="input-wrap">
+      <input id="figmaUrl" placeholder="https://www.figma.com/design/..." />
+      <button class="input-clear" id="clearFigmaUrl" tabindex="-1" aria-label="지우기">✕</button>
+    </div>
 
     <label>비교할 웹 화면</label>
     <div class="compare-block">
       <label style="margin-top:0">웹 주소</label>
-      <input id="webUrl" placeholder="브라우저 주소창의 URL을 붙여넣으세요" />
+      <div class="input-wrap">
+        <input id="webUrl" placeholder="브라우저 주소창의 URL을 붙여넣으세요" />
+        <button class="input-clear" id="clearWebUrl" tabindex="-1" aria-label="지우기">✕</button>
+      </div>
 
       <label style="margin-top:8px">스크린샷</label>
       <div class="upload-zone" id="uploadZone">
@@ -102,21 +122,21 @@
     </div>
 
     <div class="row">
-      <div><label>폭(width, 선택)</label><input id="width" placeholder="자동" inputmode="numeric" /></div>
-      <div><label>scale(선택)</label><input id="scale" placeholder="1" inputmode="decimal" /></div>
+      <div><label>폭(width, 선택)</label><div class="input-wrap"><input id="width" placeholder="자동" inputmode="numeric" /><button class="input-clear" id="clearWidth" tabindex="-1" aria-label="지우기">✕</button></div></div>
+      <div><label>scale(선택)</label><div class="input-wrap"><input id="scale" placeholder="1" inputmode="decimal" /><button class="input-clear" id="clearScale" tabindex="-1" aria-label="지우기">✕</button></div></div>
     </div>
 
     <div class="btn-group">
       <button class="btn btn-visual" id="goVisual">
         <div class="btn-inner">
           <span class="btn-label">⚡ 빠른 시각 비교</span>
-          <span class="btn-desc">이미지 오버레이만 · 약 2~3분</span>
+          <span class="btn-desc">시각 전체 분석만 · 약 5~7분</span>
         </div>
       </button>
       <button class="btn btn-full" id="goFull">
         <div class="btn-inner">
           <span class="btn-label">🔍 상세 QA 분석</span>
-          <span class="btn-desc">수치 + 시각 전체 분석 · 약 5분</span>
+          <span class="btn-desc">수치 및 시각 전체 분석 · 약 8~12분</span>
         </div>
       </button>
     </div>
@@ -136,6 +156,20 @@ try {
   const saved = JSON.parse(localStorage.getItem(LS) || '{}');
   for (const k of ['figmaUrl','webUrl','width','scale']) if (saved[k]) $(k).value = saved[k];
 } catch {}
+
+// 인풋 X 버튼
+function bindClear(inputId, clearId, onClear) {
+  const inp = $(inputId), btn = $(clearId);
+  const wrap = inp.closest('.input-wrap');
+  function sync() { wrap.classList.toggle('has-value', inp.value.length > 0); }
+  inp.addEventListener('input', sync);
+  btn.addEventListener('click', () => { inp.value = ''; sync(); if (onClear) onClear(); inp.focus(); });
+  sync();
+}
+bindClear('figmaUrl', 'clearFigmaUrl');
+bindClear('webUrl', 'clearWebUrl', updateDimState);
+bindClear('width', 'clearWidth');
+bindClear('scale', 'clearScale');
 
 // 스크린샷 업로드 로직
 let webImageBase64 = null;
