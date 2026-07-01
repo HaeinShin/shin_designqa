@@ -7,7 +7,7 @@
 //   서버는 figma를 직접 읽지 않는다(헤드리스는 OAuth 미인증). figma 읽기는 세션이 담당.
 
 import { createServer } from 'node:http';
-import { readFile, writeFile, stat } from 'node:fs/promises';
+import { readFile, writeFile, stat, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, extname, dirname, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -39,9 +39,16 @@ function send(res, code, body, type = 'text/plain; charset=utf-8') {
   res.end(body);
 }
 
+const MAX_BODY_MB = 25;
+
 async function readBody(req) {
   const chunks = [];
-  for await (const c of req) chunks.push(c);
+  let total = 0;
+  for await (const c of req) {
+    total += c.length;
+    if (total > MAX_BODY_MB * 1024 * 1024) throw new Error(`요청 본문이 너무 커요 (최대 ${MAX_BODY_MB}MB).`);
+    chunks.push(c);
+  }
   return Buffer.concat(chunks).toString('utf-8');
 }
 
@@ -66,15 +73,34 @@ const server = createServer(async (req, res) => {
       const body = JSON.parse((await readBody(req)) || '{}');
       const figmaUrl = String(body.figmaUrl || '').trim();
       const webUrl = String(body.webUrl || '').trim();
-      if (!/^https?:\/\//.test(figmaUrl) || !/^https?:\/\//.test(webUrl)) {
-        return send(res, 400, JSON.stringify({ error: 'figmaUrl·webUrl 둘 다 http(s) URL이어야 해요.' }), MIME['.json']);
+      const webImageBase64 = body.webImageBase64 ? String(body.webImageBase64) : null;
+
+      if (!/^https?:\/\//.test(figmaUrl)) {
+        return send(res, 400, JSON.stringify({ error: 'figmaUrl은 http(s) URL이어야 해요.' }), MIME['.json']);
       }
+      if (!webImageBase64 && !/^https?:\/\//.test(webUrl)) {
+        return send(res, 400, JSON.stringify({ error: '웹 URL을 입력하거나 스크린샷을 업로드해 주세요.' }), MIME['.json']);
+      }
+
+      // 스크린샷 업로드된 경우 미리 저장 (qa-watch가 캡처 건너뜀)
+      let webImageProvided = false;
+      if (webImageBase64) {
+        try {
+          const base64Data = webImageBase64.replace(/^data:[^;]+;base64,/, '');
+          await writeFile(join(REPORTS, 'web.png'), Buffer.from(base64Data, 'base64'));
+          webImageProvided = true;
+        } catch {
+          return send(res, 400, JSON.stringify({ error: '이미지 저장에 실패했어요. 파일이 손상됐거나 형식이 맞지 않아요.' }), MIME['.json']);
+        }
+      }
+
       const id = `qa_${Date.now()}`;
       const mode = body.mode === 'visual' ? 'visual' : 'full';
       const request = {
         id,
         figmaUrl,
-        webUrl,
+        webUrl: webUrl || null,
+        webImageProvided,
         width: Number(body.width) > 0 ? Number(body.width) : null,
         scale: Number(body.scale) > 0 ? Number(body.scale) : null,
         mode,
@@ -94,7 +120,7 @@ const server = createServer(async (req, res) => {
         if (!existsSync(hbFile)) return send(res, 200, JSON.stringify({ active: false }), MIME['.json']);
         const hb = JSON.parse(await readFile(hbFile, 'utf-8'));
         const ageSec = (Date.now() - new Date(hb.tick).getTime()) / 1000;
-        return send(res, 200, JSON.stringify({ active: ageSec < 90, ageSec: Math.round(ageSec) }), MIME['.json']);
+        return send(res, 200, JSON.stringify({ active: ageSec < 600, ageSec: Math.round(ageSec) }), MIME['.json']);
       } catch {
         return send(res, 200, JSON.stringify({ active: false }), MIME['.json']);
       }
@@ -131,6 +157,8 @@ const server = createServer(async (req, res) => {
     send(res, 500, JSON.stringify({ error: String(e?.message || e) }), MIME['.json']);
   }
 });
+
+await mkdir(REPORTS, { recursive: true });
 
 server.listen(PORT, () => {
   const addr = `http://localhost:${PORT}`;

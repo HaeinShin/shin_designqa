@@ -16,10 +16,12 @@ Figma MCP는 **이 인터랙티브 세션에만** 연결돼 있으므로, 헤드
 
 ## 절차
 
-0. **하트비트 기록** — 매 틱 시작 시 `reports/_loop_heartbeat.json`을 갱신한다(런처가 이 파일로 루프 활성 여부를 판단).
-   - Read `reports/_loop_heartbeat.json` → Edit로 타임스탬프 교체 (예: `{"tick":"2026-06-29T08:00:00Z"}`).
-   - 파일이 없거나 Read 실패 시에는 건너뛴다(하트비트는 non-critical).
-   - **Bash echo 리다이렉트(`echo ... > file`)는 사용하지 않는다** — 퍼미션 허용 목록에 없어 차단될 수 있다.
+0. **하트비트 기록** — 매 틱 시작 시 `reports/_loop_heartbeat.json`을 **실제 현재 시각**으로 갱신한다(런처가 이 파일로 루프 활성 여부를 판단).
+   - **반드시 Bash로** 아래 명령어를 실행해 실제 현재 시각을 기록한다. 타임스탬프를 손으로 작성하거나 Write 도구로 고정 문자열을 쓰면 서버가 "꺼짐"으로 판단하므로 절대 금지.
+   - ```bash
+     node -e "require('fs').writeFileSync('reports/_loop_heartbeat.json', JSON.stringify({tick:new Date().toISOString()}))"
+     ```
+   - Bash 명령이 실패해도 계속 진행한다(하트비트는 non-critical).
 
 1. **일감 확인** — `reports/_qa_request.json`을 Read한다(Bash `cat` 가능).
    - 파일이 없거나 JSON 파싱 실패 → **아무것도 하지 말고** "대기 중(요청 없음)"만 한 줄로 보고하고 끝낸다. (루프 비용 최소화)
@@ -45,9 +47,10 @@ Figma MCP는 **이 인터랙티브 세션에만** 연결돼 있으므로, 헤드
       - `download_assets` → 반환 URL을 `curl -o reports/figma.png "<url>"` 로 저장 (실패해도 계속 진행)
 
    b. **qa-analyzer 호출 (design-qa 3-A단계에 해당)** — **단일 모드 고정** (런처는 단일 프레임 기준). 경로 전달:
-      `figmaCodePath=reports/figma-code.txt`, `figmaMetaPath=reports/figma-meta.xml`, `figmaTokensPath=reports/figma-tokens.json`(있으면), `figmaImagePath=reports/figma.png`(없으면 "이미지 없음" 명시), `webUrl`, `width`(null이면 meta에서 추출한 값), `outPrefix=reports/web`, `reportPath=reports/qa-report.html`, **`mode`(visual 또는 full)**
-      - `scale`이 null이면 기본값 2 사용.
+      `figmaCodePath=reports/figma-code.txt`, `figmaMetaPath=reports/figma-meta.xml`, `figmaTokensPath=reports/figma-tokens.json`(있으면), `figmaImagePath=reports/figma.png`(없으면 "이미지 없음" 명시), `webUrl`(없으면 null), `width`(null이면 meta에서 추출한 값), `outPrefix=reports/web`, `reportPath=reports/qa-report.html`, **`mode`(visual 또는 full)**
+      - `scale`이 null이면 기본값 1 사용.
       - 리포트는 `reports/qa-report.html`.
+      - **`webImageProvided: true`인 경우** — 서버가 이미 `reports/web.png`를 저장했으므로 **Playwright 캡처 건너뜀**. qa-analyzer에게 "웹 캡처 건너뜀 — reports/web.png 사용 (사용자 업로드 스크린샷)"을 명시하고, `webUrl` 대신 `webImagePath=reports/web.png`를 전달한다.
 
 4. **결과 기록** — 끝나면 `reports/_qa_result.json`을 Write한다:
    - 성공: `{ "id": "<일감 id>", "status": "done", "report": "reports/qa-report.html" }`

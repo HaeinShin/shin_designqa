@@ -92,22 +92,26 @@ description: 메인이 미리 저장해 둔 Figma 디자인 데이터(코드/메
 - **폰트 렌더링**: 헤드리스 Chromium에 디자인 폰트가 없으면 fallback으로 렌더 → 폰트/시각 차이가 거짓양성일 수 있음. 폰트 관련 차이는 **보수적으로(🟡)** 판단하고 리포트에 캐비엇 표기.
 - `lineHeight:normal`은 px 환산이 폰트마다 달라 직접 비교 불가(🟡/⚪) · 폰트는 fallback 체인 첫 항목 위주 · 로그인/빈 화면이 캡처됐으면 요약·리포트에 경고.
 
-### 3V. 시각 비교 (visual 모드) — 이미지만
+### 3V. 시각 비교 (visual 모드) — 이미지만, 최대한 빠르게
 
-`figmaImagePath` vs `<outPrefix>.png` 를 비교한다:
-- 레이아웃/정렬/섹션 순서/누락 요소를 눈으로 판단.
+`figmaImagePath` vs `<outPrefix>.png` 를 비교한다. **생각하는 시간을 최소화하고 바로 리포트로 넘어간다.**
+- 레이아웃/정렬/섹션 순서/누락 요소를 눈으로만 판단. 관찰은 **최대 5가지**로 제한.
 - 캡처 폭과 Figma 폭이 다르면 경고.
-- 수치(색·폰트·px 값) 비교는 **하지 않는다**.
+- 수치(색·폰트·px 값) 비교는 **절대 하지 않는다**.
+- ⚠️ **분석에 30초 이상 쓰지 말 것** — 이미지 보고 즉시 리포트 작성으로 넘어간다.
 
-### 4V. 리포트 작성 (visual 모드) — 고정 템플릿, 이미지 섹션만
+### 4V. 리포트 작성 (visual 모드) — 최소한으로, 빠르게
 
-고정 템플릿을 Read해서 아래 placeholder를 채운다:
-- `{{TITLE_SUFFIX}}`, `{{META_LINE}}`, `{{FIGMA_CAPTION}}`, `{{WEB_CAPTION}}`, `{{SUMMARY}}`: 시각 비교 결과 요약.
-- `{{CHIPS}}`: `<span class="chip">시각 비교</span>` + 눈에 띄는 레이아웃 차이 수.
-- `{{DIFF_SECTION_STYLE}}`: `"display:none"` — 차이 목록 섹션 전체(h2·thead·table·안내 문구) 숨김.
-- `{{DIFF_ROWS}}`: **빈 문자열** — 수치 비교표 없음.
-- `{{NEAR_MATCH_LIST}}`, `{{CHECK_LIST}}`: 레이아웃 관찰 메모만(가볍게).
-- `{{SUMMARY}}` 끝에 `<div class="caveats"><span class="badge">⚡ 빠른 시각 비교 모드 — 수치 분석 생략됨</span></div>` 배지 추가.
+고정 템플릿을 Read해서 아래 placeholder만 채운다. **placeholder 내용을 길게 쓰지 말 것.**
+- `{{TITLE_SUFFIX}}`: 화면 이름.
+- `{{META_LINE}}`: 한 줄 메타정보.
+- `{{FIGMA_CAPTION}}` / `{{WEB_CAPTION}}`: 짧은 캡션.
+- `{{CHIPS}}`: `<span class="chip">⚡ 시각 비교</span>` 고정 — 개수 집계 없음.
+- `{{SUMMARY}}`: **2~3문장 이내**로 핵심만. 끝에 `<div class="caveats"><span class="badge">⚡ 빠른 시각 비교 모드 — 수치 분석 생략됨</span></div>` 배지.
+- `{{DIFF_SECTION_STYLE}}`: `"display:none"` — 차이 목록 섹션 숨김.
+- `{{DIFF_ROWS}}`: **빈 문자열**.
+- `{{NEAR_MATCH_LIST}}`: **빈 문자열** — 작성 금지.
+- `{{CHECK_LIST}}`: **빈 문자열** — 작성 금지.
 
 ---
 
