@@ -12,6 +12,7 @@ import { existsSync } from 'node:fs';
 import { join, extname, dirname, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
+import { networkInterfaces } from 'node:os';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -21,6 +22,7 @@ const RES_FILE = join(REPORTS, '_qa_result.json');
 const LAUNCHER = join(__dirname, 'launcher.html');
 
 const PORT = Number(process.argv[2]) > 0 ? Number(process.argv[2]) : 4567;
+const HOST = process.argv[3] || '0.0.0.0';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -55,7 +57,7 @@ async function readBody(req) {
 // reports/ 밖으로 나가는 경로 접근 차단
 function safeReportPath(rel) {
   const p = normalize(join(REPORTS, rel));
-  return p.startsWith(REPORTS) ? p : null;
+  return p.startsWith(REPORTS + '/') ? p : null;
 }
 
 const server = createServer(async (req, res) => {
@@ -160,10 +162,17 @@ const server = createServer(async (req, res) => {
 
 await mkdir(REPORTS, { recursive: true });
 
-server.listen(PORT, () => {
-  const addr = `http://localhost:${PORT}`;
-  console.log(`디자인 QA 런처: ${addr}`);
+server.listen(PORT, HOST, () => {
+  const ifaces = networkInterfaces();
+  let localIp = '127.0.0.1';
+  for (const list of Object.values(ifaces)) {
+    const hit = list.find(i => i.family === 'IPv4' && !i.internal);
+    if (hit) { localIp = hit.address; break; }
+  }
+  const displayAddr = `http://${HOST === '0.0.0.0' ? localIp : HOST}:${PORT}`;
+  const localhostAddr = `http://localhost:${PORT}`;
+  console.log(`디자인 QA 런처: ${displayAddr}  (로컬: ${localhostAddr})`);
   console.log(`Claude 창에서  /loop 30s /qa-watch  를 한 번 켜 두세요 (그래야 버튼이 동작해요).`);
-  // macOS: 런처 페이지 자동 열기 (한 단계 줄이기)
-  if (process.platform === 'darwin') spawn('open', [addr], { stdio: 'ignore', detached: true }).unref();
+  // macOS: 런처 페이지 자동 열기
+  if (process.platform === 'darwin') spawn('open', [displayAddr], { stdio: 'ignore', detached: true }).unref();
 });

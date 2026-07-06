@@ -34,7 +34,7 @@
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Apple SD Gothic Neo",sans-serif;
        background:var(--bg);color:var(--ink);line-height:1.55;font-size:14px}
-  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 80px}
+  .wrap{max-width:none;padding:28px clamp(16px,3vw,48px) 80px}
   header h1{font-size:22px;margin:0 0 6px}
   .meta{color:var(--muted);font-size:13px;margin-bottom:14px}
   .meta b{color:var(--ink);font-weight:600}
@@ -88,7 +88,7 @@
   .ov-top{position:absolute;inset:0}
   .ov-top img{display:block;width:100%;opacity:.5}
   /* side by side */
-  .side{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+  .side{display:flex;gap:18px;justify-content:center;flex-wrap:nowrap}
   .side figure{margin:0}
   .side figcaption{text-align:center;font-size:12.5px;color:var(--muted);margin-top:8px}
   .hint{font-size:12.5px;color:var(--muted);text-align:center;margin-top:12px}
@@ -107,6 +107,9 @@
   details li{margin:3px 0}
   .note{font-size:12.5px;color:var(--muted);margin-top:8px}
   code{font-family:ui-monospace,"SF Mono",Menlo,monospace;background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px}
+  /* phase1 상세분석 로딩 스피너 */
+  .spin-ring{width:32px;height:32px;border:3px solid var(--line);border-top-color:var(--primary);border-radius:50%;animation:qa-spin .8s linear infinite;margin:0 auto}
+  @keyframes qa-spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -204,6 +207,7 @@
 </details>
 </div>
 
+{{DETAIL_SPINNER_SECTION}}
 </div>
 
 <script>
@@ -214,6 +218,7 @@
       document.querySelectorAll('.pane').forEach(function(x){x.classList.remove('active')});
       t.classList.add('active');
       document.getElementById(t.dataset.pane).classList.add('active');
+      window.dispatchEvent(new Event('resize'));
     });
   });
   // swipe (드래그 핸들)
@@ -249,9 +254,11 @@
     var natW=0, fitW=0, curW=0, mode='fit';
     function paneW(){
       var p=visual.querySelector('.pane.active');
-      return Math.max(200,((p&&p.clientWidth)||visual.clientWidth)-2);
+      var w=Math.max(200,((p&&p.clientWidth)||visual.clientWidth)-2);
+      if(p&&p.id==='side') return Math.max(140,Math.floor((w-18)/2));
+      return w;
     }
-    function computeFit(){ fitW=Math.min(natW||360, paneW()); }
+    function computeFit(){ fitW=paneW(); }
     function label(){
       if(levelEl) levelEl.textContent = natW ? Math.round(curW/natW*100)+'%' : '맞춤';
       if(segFit) segFit.classList.toggle('on', mode==='fit');
@@ -268,7 +275,7 @@
       if(m==='fit'){ computeFit(); apply(fitW); }
       else if(m==='full'){ apply(natW); }
     }
-    function init(){ natW=webImg.naturalWidth||360; setMode('fit'); }
+    function init(){ natW=webImg.naturalWidth||360; setMode('full'); }
     if(webImg && webImg.complete && webImg.naturalWidth) init();
     else if(webImg) webImg.addEventListener('load', init);
     visual.querySelectorAll('[data-z]').forEach(function(b){

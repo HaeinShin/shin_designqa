@@ -2,6 +2,7 @@
   "permissions": {
     "allow": [
       "Write(reports/**)",
+      "Write(/tmp/*)",
       "Read(reports/**)",
       "Read(.claude/**)",
       "Read(scripts/**)",
@@ -20,16 +21,21 @@
       "mcp__plugin_figma_figma__download_assets",
       "Bash(node scripts/capture.mjs *)",
       "Bash(node scripts/qa-server.mjs *)",
+      "Bash(node -e *)",
       "Bash(npm run launcher)",
       "Bash(npm run launcher &)",
       "Bash(npm run setup)",
       "Bash(curl -o reports/figma.png *)",
+      "Bash(curl -s -o reports/figma.png *)",
       "Bash(curl -s -o /dev/null *)",
       "Bash(open reports/qa-report.html*)",
       "Bash(open http://localhost:4567*)",
       "Bash(lsof -ti:4567*)",
       "Bash(pkill -f qa-server.mjs*)",
-      "Bash(mkdir -p reports)"
+      "Bash(mkdir -p reports)",
+      "Bash(rm -f reports/*)",
+      "Bash(cat reports/**)",
+      "Bash(cat > reports/**)"
     ]
   }
 }

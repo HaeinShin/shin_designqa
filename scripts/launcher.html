@@ -68,9 +68,9 @@
                  font-size:13px; line-height:1; padding:3px 5px; display:none; border-radius:4px; }
   .input-clear:hover { color:var(--txt); background:var(--line); }
   .input-wrap.has-value .input-clear { display:block; }
-  .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+  .card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; }
   .card-header h1 { margin:0; }
-  .loop-badge { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--sub); flex-shrink:0; background:var(--surface2); padding:4px 10px; border-radius:20px; border:none; }
+  .loop-badge { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--sub); flex-shrink:0; background:#1e2023; padding:4px 10px; border-radius:9999px; border:none; }
   .loop-badge .dot-on  { width:8px; height:8px; border-radius:50%; background:var(--ok); flex-shrink:0; }
   .loop-badge .dot-off { width:8px; height:8px; border-radius:50%; background:#e0683a; flex-shrink:0; }
   .loop-badge code { font-family:ui-monospace,"SF Mono",Menlo,monospace; background:var(--card); padding:1px 5px; border-radius:4px;
@@ -286,8 +286,8 @@ async function poll(id) {
     const d = await r.json();
     const res = d.result;
     if (res && res.status === 'done') {
-      stop();
       const path = res.report || 'reports/qa-report.html';
+      stop();
       $('status').innerHTML = `<span style="color:var(--ok)">✓ 완료</span> · 리포트가 준비됐어요.
         <br><a class="report" href="/${path}" target="_blank">리포트 열기 →</a>`;
       return;
