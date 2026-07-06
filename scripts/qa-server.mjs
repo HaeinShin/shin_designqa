@@ -96,7 +96,7 @@ const server = createServer(async (req, res) => {
         }
       }
 
-      const id = `qa_${Date.now()}`;
+      const id = `qa_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
       const mode = body.mode === 'visual' ? 'visual' : 'full';
       const request = {
         id,
@@ -174,5 +174,5 @@ server.listen(PORT, HOST, () => {
   console.log(`디자인 QA 런처: ${displayAddr}  (로컬: ${localhostAddr})`);
   console.log(`Claude 창에서  /loop 30s /qa-watch  를 한 번 켜 두세요 (그래야 버튼이 동작해요).`);
   // macOS: 런처 페이지 자동 열기
-  if (process.platform === 'darwin') spawn('open', [displayAddr], { stdio: 'ignore', detached: true }).unref();
+  if (process.platform === 'darwin') spawn('open', [localhostAddr], { stdio: 'ignore', detached: true }).unref();
 });

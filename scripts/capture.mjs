@@ -9,7 +9,7 @@ import { dirname } from 'node:path';
 const MAX_ELEMENTS = 200; // JSON·토큰 폭발 방지 상한 (면적 큰 순 정렬 후 상위 200개로 충분)
 
 const [, , url, outPrefix = 'reports/web', widthArg, scaleArg, modeArg] = process.argv;
-const visualOnly = modeArg === 'visual';
+const visualOnly = modeArg === 'visual' || scaleArg === 'visual';
 
 if (!url) {
   console.error('usage: node scripts/capture.mjs <url> [outPrefix] [width] [scale]');
@@ -39,7 +39,17 @@ try {
   });
 
   // load 이벤트까지 대기(이미지/CSS 포함). HMR 웹소켓이 있어도 load는 발생하므로 안 걸림.
-  await page.goto(url, { waitUntil: 'load', timeout: 30000 });
+  const response = await page.goto(url, { waitUntil: 'load', timeout: 30000 });
+  if (response && !response.ok()) {
+    const status = response.status();
+    if (status === 401 || status === 403) {
+      console.error(`접속 오류 (HTTP ${status}): ${url} — 서버가 인증을 요구합니다. VPN 연결 또는 로그인 후 재시도하세요.`);
+    } else {
+      console.error(`접속 오류 (HTTP ${status}): ${url} — 서버가 오류 응답을 반환했습니다.`);
+    }
+    await browser.close();
+    process.exit(2);
+  }
   // 네트워크가 잠잠해지면 좋지만, 안 끝나도(HMR 등) 그냥 진행
   await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
 
@@ -61,7 +71,7 @@ try {
         el.clientHeight >= vh * 0.5
       );
     };
-    const scrollers = [document.scrollingElement];
+    const scrollers = document.scrollingElement ? [document.scrollingElement] : [];
     for (const el of document.querySelectorAll('*')) {
       if (isInFlowScroller(el)) scrollers.push(el);
     }

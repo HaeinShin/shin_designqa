@@ -61,7 +61,8 @@ Figma MCP는 **이 인터랙티브 세션에만** 연결돼 있으므로, 헤드
       **▶ `mode === "full"` (프로그레시브 렌더링 — 2단계):**
 
       **Phase 1** — qa-analyzer를 `mode="phase1"`로 호출 (이미지 비교 + 스피너 리포트):
-      `figmaCodePath=reports/figma-code.txt`, `figmaMetaPath=reports/figma-meta.xml`, `figmaImagePath=reports/figma.png`(없으면 "이미지 없음" 명시), `webUrl`(없으면 null), `width`, `outPrefix=reports/web`, `reportPath=reports/qa-report.html`, `mode=phase1`
+      `figmaCodePath=reports/figma-code.txt`, `figmaMetaPath=reports/figma-meta.xml`, `figmaImagePath=reports/figma.png`(없으면 "이미지 없음" 명시), `webUrl`(없으면 null), `width`, `scale`, `outPrefix=reports/web`, `reportPath=reports/qa-report.html`, `mode=phase1`
+      - `scale`이 null이면 기본값 1 사용.
       - `webImageProvided: true`이면 `webImagePath=reports/web.png` 전달, 캡처 건너뜀.
       → Phase 1 완료 후 바로 4단계(결과 기록)로 이동.
 
