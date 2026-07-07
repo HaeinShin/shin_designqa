@@ -1,6 +1,6 @@
 ---
 name: qa-watch
-description: 웹 런처(scripts/qa-server.mjs)가 남긴 일감 파일(reports/_qa_request.json)을 한 번 확인해, 대기 중인 QA 요청이 있으면 design-qa를 실행하고 결과를 reports/_qa_result.json에 기록한다. 보통 `/loop 30s /qa-watch`처럼 루프로 돌린다.
+description: 웹 런처(scripts/qa-server.mjs)가 남긴 일감 파일(reports/_qa_request.json)을 한 번 확인해, 대기 중인 QA 요청이 있으면 design-qa를 실행하고 결과를 reports/_qa_result.json에 기록한다. 보통 `/loop 1m /qa-watch`처럼 루프로 돌린다.
 ---
 
 # QA 감시 — 한 틱(tick)
@@ -15,6 +15,11 @@ Figma MCP는 **이 인터랙티브 세션에만** 연결돼 있으므로, 헤드
 - 오류가 생기면 사용자에게 묻지 말고 `_qa_result.json`에 `status: "error"`로 기록하고 끝낸다.
 
 ## 절차
+
+0. **중단 요청 확인** — 하트비트보다 먼저: `reports/_loop_stop.json` 파일이 있으면:
+   1. `rm -f reports/_loop_stop.json` (Bash 실행)
+   2. CronList → qa-watch 관련 잡 전부 CronDelete
+   3. 하트비트 갱신 없이 종료한다 (런처가 곧 "대기 없음"으로 전환됨)
 
 0. **하트비트 기록** — 매 틱 시작 시 `reports/_loop_heartbeat.json`을 **실제 현재 시각**으로 갱신한다(런처가 이 파일로 루프 활성 여부를 판단).
    - **반드시 Bash로** 아래 명령어를 실행해 실제 현재 시각을 기록한다. 타임스탬프를 손으로 작성하거나 Write 도구로 고정 문자열을 쓰면 서버가 "꺼짐"으로 판단하므로 절대 금지.

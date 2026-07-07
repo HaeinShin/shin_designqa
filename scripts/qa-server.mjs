@@ -19,6 +19,7 @@ const ROOT = join(__dirname, '..');
 const REPORTS = join(ROOT, 'reports');
 const REQ_FILE = join(REPORTS, '_qa_request.json');
 const RES_FILE = join(REPORTS, '_qa_result.json');
+const STOP_FILE = join(REPORTS, '_loop_stop.json');
 const LAUNCHER = join(__dirname, 'launcher.html');
 
 const PORT = Number(process.argv[2]) > 0 ? Number(process.argv[2]) : 4567;
@@ -115,6 +116,12 @@ const server = createServer(async (req, res) => {
       return send(res, 200, JSON.stringify({ id }), MIME['.json']);
     }
 
+    // 루프 중단 요청: 런처 "연결 끊기" 버튼이 호출
+    if (req.method === 'POST' && path === '/loop-stop') {
+      await writeFile(STOP_FILE, JSON.stringify({ requestedAt: new Date().toISOString() }));
+      return send(res, 200, JSON.stringify({ ok: true }), MIME['.json']);
+    }
+
     // 감시 루프 활성 여부: 하트비트 파일 나이로 판단
     if (req.method === 'GET' && path === '/loop-status') {
       try {
@@ -172,7 +179,7 @@ server.listen(PORT, HOST, () => {
   const displayAddr = `http://${HOST === '0.0.0.0' ? localIp : HOST}:${PORT}`;
   const localhostAddr = `http://localhost:${PORT}`;
   console.log(`디자인 QA 런처: ${displayAddr}  (로컬: ${localhostAddr})`);
-  console.log(`Claude 창에서  /loop 30s /qa-watch  를 한 번 켜 두세요 (그래야 버튼이 동작해요).`);
+  console.log(`Claude 창에서  /loop 1m /qa-watch  를 한 번 켜 두세요 (그래야 버튼이 동작해요).`);
   // macOS: 런처 페이지 자동 열기
   if (process.platform === 'darwin') spawn('open', [localhostAddr], { stdio: 'ignore', detached: true }).unref();
 });
