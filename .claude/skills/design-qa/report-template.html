@@ -277,7 +277,7 @@
       if(m==='fit'){ computeFit(); apply(fitW); }
       else if(m==='full'){ apply(natW); }
     }
-    function init(){ natW=(figmaImg&&figmaImg.naturalWidth)||webImg.naturalWidth||360; setMode('full'); }
+    function init(){ natW=(figmaImg&&figmaImg.naturalWidth)||webImg.naturalWidth||360; setMode('fit'); }
     if(webImg && webImg.complete && webImg.naturalWidth) init();
     else if(webImg) webImg.addEventListener('load', init);
     if(figmaImg && !figmaImg.complete) figmaImg.addEventListener('load',function(){ if(!natW||mode==='full'){ natW=figmaImg.naturalWidth||natW; apply(natW); }});
