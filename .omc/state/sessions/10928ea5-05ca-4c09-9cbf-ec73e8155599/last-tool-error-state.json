@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"bash scripts/publish.sh 2>&1\",\"description\":\"배포 repo에 변경사항 동기화\"}",
+  "error": "Exit code 1\n▶ Design QA 플러그인 배포 동기화\n  소스: /Users/nhn/Desktop/AI스터디/shin_designqa\n  대상: /Users/nhn/Desktop/AI스터디/shin-designqa-plugin\n\n  ✓ skills 복사\n  ✓ agents 복사\n  ✓ scripts 복사\n  ✓ start.command 복사 (chmod +x)\ncp: /Users/nhn/Desktop/AI스터디/shin_designqa/start.command: No such file or directory",
+  "timestamp": "2026-07-09T09:16:33.337Z",
+  "retry_count": 1
+}

@@ -1,0 +1,110 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1783587490810,
+  "projectRoot": "/Users/nhn/Desktop/AI스터디/shin_designqa",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": ">=18",
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "playwright",
+        "version": "1.48.0",
+        "category": "testing"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": "Node.js 18"
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {
+      "setup": "npm install && npx playwright install chromium",
+      "capture": "node scripts/capture.mjs",
+      "launcher": "node scripts/qa-server.mjs"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "scripts"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "reports": {
+      "path": "reports",
+      "purpose": null,
+      "fileCount": 10,
+      "lastAccessed": 1783587490751,
+      "keyFiles": [
+        "_loop_heartbeat.json",
+        "_qa_request.json",
+        "_qa_result.json",
+        "figma-code.txt",
+        "figma-meta.xml"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 6,
+      "lastAccessed": 1783587490752,
+      "keyFiles": [
+        "capture.mjs",
+        "icon-upload.svg",
+        "launcher.html",
+        "publish.sh",
+        "qa-server.mjs"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "scripts/capture.mjs",
+      "accessCount": 2,
+      "lastAccessed": 1783588101577,
+      "type": "file"
+    },
+    {
+      "path": "scripts/publish.sh",
+      "accessCount": 2,
+      "lastAccessed": 1783588607317,
+      "type": "file"
+    },
+    {
+      "path": "reports/_qa_request.json",
+      "accessCount": 1,
+      "lastAccessed": 1783587596900,
+      "type": "file"
+    },
+    {
+      "path": "reports/qa-report.html",
+      "accessCount": 1,
+      "lastAccessed": 1783587727167,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

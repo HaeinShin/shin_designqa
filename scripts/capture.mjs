@@ -135,6 +135,15 @@ try {
     await page.waitForTimeout(300); // 리플로우/지연 이미지 안정화
   }
 
+  // 뷰포트를 페이지 전체 높이로 늘려 스크롤 라이브러리(Lenis 등) 우회.
+  // fullPage:true 는 스크롤하며 이어붙이는 방식이라 scroll-hijack 사이트에서 하단이 잘린다.
+  // 뷰포트 자체를 페이지 높이로 설정하면 스크롤 없이 전체가 한 번에 렌더된다.
+  const fullH = Math.min(expand.height, 16000); // Chromium 캔버스 상한
+  if (fullH > 900) {
+    await page.setViewportSize({ width, height: fullH });
+    await page.waitForTimeout(200);
+  }
+
   await page.screenshot({ path: `${outPrefix}.png`, fullPage: true });
 
   if (visualOnly) {

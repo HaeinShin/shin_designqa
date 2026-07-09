@@ -18,7 +18,7 @@
   - `download_assets`(임시 URL 반환) → `curl -o reports/figma.png "<url>"` (기준 이미지)
 - **`qa-analyzer` 서브에이전트**: MCP 미사용. 전달받은 Figma 파일 + 웹 캡처(직접 실행)로 **500요소 비교·리포트 작성**만 하고 **짧은 요약만** 반환.
 - 메인에서 `web-styles.json`(500요소)·캡처 스크린샷을 **직접 읽지 말 것.**
-- **반응형 QA**: 메인이 브레이크포인트별 Figma 데이터를 저장한 뒤 `qa-analyzer`를 **병렬 호출** → 각자 리포트 작성 → 메인은 작은 합본 인덱스만 만든다.ㅇ
+- **반응형 QA**: 메인이 브레이크포인트별 Figma 데이터를 저장한 뒤 `qa-analyzer`를 **병렬 호출** → 각자 리포트 작성 → 메인은 작은 합본 인덱스만 만든다.
 
 ## 원칙 (가볍게·심플하게)
 - 비교/분석은 **코드 diff 엔진이 아니라 Claude가 직접** 판단한다.
@@ -48,11 +48,21 @@
 - `.claude/skills/design-qa/` — QA 오케스트레이션(입력 수집 → 위임 → 요약 전달)
 - `.claude/skills/qa-watch/` — 웹 런처 일감(`_qa_request.json`)을 집어 design-qa를 돌리는 감시 틱(`/loop`로 반복)
 - `.claude/agents/qa-analyzer.md` — 비교·분석 워커(무거운 데이터 전담, 짧은 요약 반환)
+- `.claude/agents/ui-designer.md` — DESIGN-linear.md 토큰 기준 HTML UI 디자인 적용 전담
 - `scripts/capture.mjs` — Playwright 캡처
 - `scripts/qa-server.mjs` + `scripts/launcher.html` — 웹 런처(버튼으로 QA 트리거)
+- `scripts/publish.sh` — 개발 repo → `shin-designqa-plugin`(배포 repo) 동기화
 - `reports/` — 산출물: `figma-code.txt`/`figma-meta.xml`/`figma-tokens.json`/`figma.png`(메인 덤프), `web.png`/`web-styles.json`(캡처), `qa-report.html`/브레이크포인트별 리포트
-- `README.md` — 사람용 사용법(셋업·예시·문제 해결)
+- `CLAUDE.deploy.md` — 배포 repo에 `CLAUDE.md`로 복사되는 AI 지시문 (publish.sh가 처리)
+- `README.md` — 개발자용 사용법(셋업·예시·문제 해결)
 - `기획서.md` — 제품 기획
+
+## 배포 워크플로우
+- 이 프로젝트(shin_designqa)가 **원본 개발 환경**이다. 새 기능·수정은 여기서 진행.
+- 배포 대상은 `shin-designqa-plugin`(GitHub: https://github.com/HaeinShin/shin-designqa-plugin).
+- 반영할 때: `bash scripts/publish.sh` — skills·agents·scripts·package.json·CLAUDE.deploy.md를 배포 repo로 복사.
+- `start.mjs`와 `start.command`는 배포 repo 전용 파일 — 개발 repo에는 없고 publish.sh도 복사하지 않는다.
+- publish 후 배포 repo에서 별도로 git commit/push 필요.
 
 ## 참고
 - Figma MCP 연결 계정: haein.shin@nhn.com

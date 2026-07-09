@@ -60,7 +60,10 @@ npm start   # Playwright 자동 설치(최초 1회) + 웹 런처 오픈 → http
 - `skills/design-qa/` — QA 오케스트레이션(입력 수집 → 위임 → 요약 전달)
 - `skills/qa-watch/` — 웹 런처 일감(`_qa_request.json`)을 집어 design-qa를 돌리는 감시 틱(`/loop`로 반복)
 - `agents/qa-analyzer.md` — 비교·분석 워커(무거운 데이터 전담, 짧은 요약 반환)
+- `agents/ui-designer.md` — DESIGN-linear.md 토큰 기준 HTML UI 디자인 적용 전담
 - `scripts/capture.mjs` — Playwright 캡처
 - `scripts/qa-server.mjs` + `scripts/launcher.html` — 웹 런처(버튼으로 QA 트리거)
+- `scripts/start.mjs` — `npm start` 진입점(자동 설치 + 중복 실행 방지 + 서버 기동)
+- `start.command` — 더블클릭 실행용 macOS 쉘 스크립트
 - `reports/` — 산출물(런타임 생성, git 제외)
 - `.claude-plugin/plugin.json` — Claude Plugin Marketplace 매니페스트

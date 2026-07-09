@@ -39,11 +39,6 @@ cp "$DEV_ROOT/scripts/capture.mjs"   "$DEPLOY_ROOT/scripts/capture.mjs"
 cp "$DEV_ROOT/scripts/launcher.html" "$DEPLOY_ROOT/scripts/launcher.html"
 cp "$DEV_ROOT/scripts/qa-server.mjs" "$DEPLOY_ROOT/scripts/qa-server.mjs"
 
-# start.command — 실행 권한 포함
-echo "  ✓ start.command 복사 (chmod +x)"
-cp "$DEV_ROOT/start.command" "$DEPLOY_ROOT/start.command"
-chmod +x "$DEPLOY_ROOT/start.command"
-
 # package.json — private: true 제거
 echo "  ✓ package.json 복사 (private 제거)"
 node -e "
