@@ -25,17 +25,18 @@
       "Bash(npm run launcher)",
       "Bash(npm run launcher &)",
       "Bash(npm run setup)",
-      "Bash(curl -o reports/figma.png *)",
-      "Bash(curl -s -o reports/figma.png *)",
-      "Bash(curl -s -o /dev/null *)",
-      "Bash(open reports/qa-report.html*)",
-      "Bash(open http://localhost:4567*)",
-      "Bash(lsof -ti:4567*)",
-      "Bash(pkill -f qa-server.mjs*)",
-      "Bash(mkdir -p reports)",
-      "Bash(rm -f reports/*)",
-      "Bash(cat reports/**)",
-      "Bash(cat > reports/**)"
+      "Bash(curl *)",
+      "Bash(open *)",
+      "Bash(lsof *)",
+      "Bash(pkill *)",
+      "Bash(mkdir *)",
+      "Bash(rm *)",
+      "Bash(cat *)",
+      "Bash(ls *)",
+      "Bash(echo *)",
+      "Bash([ * ])",
+      "Bash([ -f * ] && * || *)",
+      "Bash([ -f * ] && echo * || echo *)"
     ]
   }
 }

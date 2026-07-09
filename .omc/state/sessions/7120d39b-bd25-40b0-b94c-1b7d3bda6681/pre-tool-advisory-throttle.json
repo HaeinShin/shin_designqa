@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "entries": {
+    "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
+      "last_emitted_at_ms": 1783612662448,
+      "message": "Verify changes work after editing. Test functionality before marking complete."
+    },
+    "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
+      "last_emitted_at_ms": 1783612441549,
+      "message": "Read multiple files in parallel when possible for faster analysis."
+    },
+    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
+      "last_emitted_at_ms": 1783612438605,
+      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
+    "b147f42abe01dfb5a84a3f176d780bf2b64955c5bf15757a6d789474c0189baf": {
+      "last_emitted_at_ms": 1783612338778,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: QA analyzer phase2 — CSS 상세 분석"
+    },
+    "193629c2042287af56cb8aadf880181e8d50ab57ec7344285a6dd94b895ea4b0": {
+      "last_emitted_at_ms": 1783612118275,
+      "message": "Spawning agent: unknown (inherit) | Task: QA analyzer phase1 계속 진행"
+    },
+    "54406409d2626b6dc8b107d99f22d75f8c9213c36004ab9e0a7eb3f3cfcbbea6": {
+      "last_emitted_at_ms": 1783612073331,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: QA analyzer phase1 — Darkest Days Introduce PC (재실행)"
+    },
+    "999a3b672dbda1a4298071ca97e041d172ff393d867c20e630fc037f30884e81": {
+      "last_emitted_at_ms": 1783610529176,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: QA analyzer phase1 — Darkest Days Introduce PC"
+    }
+  },
+  "updated_at": "2026-07-09T15:57:42.448Z"
+}

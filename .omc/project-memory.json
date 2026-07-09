@@ -82,27 +82,87 @@
   },
   "hotPaths": [
     {
+      "path": "reports/web-styles.json",
+      "accessCount": 7,
+      "lastAccessed": 1783612344988,
+      "type": "file"
+    },
+    {
+      "path": "reports/qa-report.html",
+      "accessCount": 5,
+      "lastAccessed": 1783612296304,
+      "type": "file"
+    },
+    {
+      "path": "reports/figma-meta.xml",
+      "accessCount": 5,
+      "lastAccessed": 1783612343858,
+      "type": "file"
+    },
+    {
+      "path": "scripts/publish.sh",
+      "accessCount": 3,
+      "lastAccessed": 1783589944017,
+      "type": "file"
+    },
+    {
+      "path": ".claude/skills/design-qa/report-template.html",
+      "accessCount": 3,
+      "lastAccessed": 1783612137078,
+      "type": "file"
+    },
+    {
+      "path": "reports/figma-code.txt",
+      "accessCount": 3,
+      "lastAccessed": 1783612343399,
+      "type": "file"
+    },
+    {
       "path": "scripts/capture.mjs",
       "accessCount": 2,
       "lastAccessed": 1783588101577,
       "type": "file"
     },
     {
-      "path": "scripts/publish.sh",
+      "path": ".claude/settings.json",
       "accessCount": 2,
-      "lastAccessed": 1783588607317,
+      "lastAccessed": 1783611307185,
+      "type": "file"
+    },
+    {
+      "path": "reports/figma.png",
+      "accessCount": 2,
+      "lastAccessed": 1783612083566,
+      "type": "file"
+    },
+    {
+      "path": "reports/web.png",
+      "accessCount": 2,
+      "lastAccessed": 1783612089140,
       "type": "file"
     },
     {
       "path": "reports/_qa_request.json",
-      "accessCount": 1,
-      "lastAccessed": 1783587596900,
+      "accessCount": 2,
+      "lastAccessed": 1783612125779,
       "type": "file"
     },
     {
-      "path": "reports/qa-report.html",
+      "path": "reports/figma-tokens.json",
+      "accessCount": 2,
+      "lastAccessed": 1783612344375,
+      "type": "file"
+    },
+    {
+      "path": ".claude/skills/qa-watch/SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1783612662611,
+      "type": "file"
+    },
+    {
+      "path": ".claude/agents/qa-analyzer.md",
       "accessCount": 1,
-      "lastAccessed": 1783587727167,
+      "lastAccessed": 1783612129883,
       "type": "file"
     }
   ],
