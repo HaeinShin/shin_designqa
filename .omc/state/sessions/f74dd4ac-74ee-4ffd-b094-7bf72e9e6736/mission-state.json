@@ -1,0 +1,69 @@
+{
+  "updatedAt": "2026-07-13T04:53:04.948Z",
+  "missions": [
+    {
+      "id": "session:f74dd4ac-74ee-4ffd-b094-7bf72e9e6736:none",
+      "source": "session",
+      "name": "none",
+      "objective": "Session mission",
+      "createdAt": "2026-07-13T04:37:41.502Z",
+      "updatedAt": "2026-07-13T04:53:04.948Z",
+      "status": "done",
+      "workerCount": 1,
+      "taskCounts": {
+        "total": 1,
+        "pending": 0,
+        "blocked": 0,
+        "inProgress": 0,
+        "completed": 1,
+        "failed": 0
+      },
+      "agents": [
+        {
+          "name": "qa-analyzer:af4d730",
+          "role": "qa-analyzer",
+          "ownership": "af4d7308322cfc7b6",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-07-13T04:53:04.948Z"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "session-start:af4d7308322cfc7b6:2026-07-13T04:37:41.502Z",
+          "at": "2026-07-13T04:37:41.502Z",
+          "kind": "update",
+          "agent": "qa-analyzer:af4d730",
+          "detail": "started qa-analyzer:af4d730",
+          "sourceKey": "session-start:af4d7308322cfc7b6"
+        },
+        {
+          "id": "session-stop:af4d7308322cfc7b6:2026-07-13T04:41:20.559Z",
+          "at": "2026-07-13T04:41:20.559Z",
+          "kind": "completion",
+          "agent": "qa-analyzer:af4d730",
+          "detail": "completed",
+          "sourceKey": "session-stop:af4d7308322cfc7b6"
+        },
+        {
+          "id": "session-stop:a46c909b5ec7e8fc8:2026-07-13T04:52:29.452Z",
+          "at": "2026-07-13T04:52:29.452Z",
+          "kind": "completion",
+          "agent": "qa-analyzer:af4d730",
+          "detail": "completed",
+          "sourceKey": "session-stop:a46c909b5ec7e8fc8"
+        },
+        {
+          "id": "session-stop:a8ec3af8fd88eeacc:2026-07-13T04:53:04.948Z",
+          "at": "2026-07-13T04:53:04.948Z",
+          "kind": "completion",
+          "agent": "qa-analyzer:af4d730",
+          "detail": "completed",
+          "sourceKey": "session-stop:a8ec3af8fd88eeacc"
+        }
+      ]
+    }
+  ]
+}

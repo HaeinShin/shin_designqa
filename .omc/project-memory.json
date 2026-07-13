@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1783587490810,
+  "lastScanned": 1783916699264,
   "projectRoot": "/Users/nhn/Desktop/AI스터디/shin_designqa",
   "techStack": {
     "languages": [
@@ -56,21 +56,21 @@
     "reports": {
       "path": "reports",
       "purpose": null,
-      "fileCount": 10,
-      "lastAccessed": 1783587490751,
+      "fileCount": 12,
+      "lastAccessed": 1783916699165,
       "keyFiles": [
         "_loop_heartbeat.json",
+        "_qa_detail_ready.json",
         "_qa_request.json",
         "_qa_result.json",
-        "figma-code.txt",
-        "figma-meta.xml"
+        "figma-code.txt"
       ]
     },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 6,
-      "lastAccessed": 1783587490752,
+      "lastAccessed": 1783916699199,
       "keyFiles": [
         "capture.mjs",
         "icon-upload.svg",
@@ -82,6 +82,12 @@
   },
   "hotPaths": [
     {
+      "path": ".claude/settings.json",
+      "accessCount": 8,
+      "lastAccessed": 1783918254717,
+      "type": "file"
+    },
+    {
       "path": "reports/web-styles.json",
       "accessCount": 7,
       "lastAccessed": 1783612344988,
@@ -89,14 +95,32 @@
     },
     {
       "path": "reports/qa-report.html",
-      "accessCount": 5,
-      "lastAccessed": 1783612296304,
+      "accessCount": 7,
+      "lastAccessed": 1783917674783,
+      "type": "file"
+    },
+    {
+      "path": "reports/_qa_request.json",
+      "accessCount": 6,
+      "lastAccessed": 1783917399042,
       "type": "file"
     },
     {
       "path": "reports/figma-meta.xml",
+      "accessCount": 6,
+      "lastAccessed": 1783917467655,
+      "type": "file"
+    },
+    {
+      "path": ".claude/skills/qa-watch/SKILL.md",
       "accessCount": 5,
-      "lastAccessed": 1783612343858,
+      "lastAccessed": 1783918341399,
+      "type": "file"
+    },
+    {
+      "path": ".claude/skills/design-qa/report-template.html",
+      "accessCount": 4,
+      "lastAccessed": 1783917467903,
       "type": "file"
     },
     {
@@ -106,15 +130,21 @@
       "type": "file"
     },
     {
-      "path": ".claude/skills/design-qa/report-template.html",
-      "accessCount": 3,
-      "lastAccessed": 1783612137078,
-      "type": "file"
-    },
-    {
       "path": "reports/figma-code.txt",
       "accessCount": 3,
       "lastAccessed": 1783612343399,
+      "type": "file"
+    },
+    {
+      "path": "reports/figma.png",
+      "accessCount": 3,
+      "lastAccessed": 1783917466774,
+      "type": "file"
+    },
+    {
+      "path": "reports/web.png",
+      "accessCount": 3,
+      "lastAccessed": 1783917467387,
       "type": "file"
     },
     {
@@ -124,39 +154,9 @@
       "type": "file"
     },
     {
-      "path": ".claude/settings.json",
-      "accessCount": 2,
-      "lastAccessed": 1783611307185,
-      "type": "file"
-    },
-    {
-      "path": "reports/figma.png",
-      "accessCount": 2,
-      "lastAccessed": 1783612083566,
-      "type": "file"
-    },
-    {
-      "path": "reports/web.png",
-      "accessCount": 2,
-      "lastAccessed": 1783612089140,
-      "type": "file"
-    },
-    {
-      "path": "reports/_qa_request.json",
-      "accessCount": 2,
-      "lastAccessed": 1783612125779,
-      "type": "file"
-    },
-    {
       "path": "reports/figma-tokens.json",
       "accessCount": 2,
       "lastAccessed": 1783612344375,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/qa-watch/SKILL.md",
-      "accessCount": 2,
-      "lastAccessed": 1783612662611,
       "type": "file"
     },
     {

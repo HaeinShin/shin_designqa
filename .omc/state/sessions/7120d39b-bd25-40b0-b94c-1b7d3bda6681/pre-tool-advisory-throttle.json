@@ -1,17 +1,17 @@
 {
   "version": 1,
   "entries": {
-    "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
-      "last_emitted_at_ms": 1783612662448,
-      "message": "Verify changes work after editing. Test functionality before marking complete."
-    },
     "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
-      "last_emitted_at_ms": 1783612441549,
+      "last_emitted_at_ms": 1783612794578,
       "message": "Read multiple files in parallel when possible for faster analysis."
     },
     "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
-      "last_emitted_at_ms": 1783612438605,
+      "last_emitted_at_ms": 1783612787044,
       "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
+    "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
+      "last_emitted_at_ms": 1783612662448,
+      "message": "Verify changes work after editing. Test functionality before marking complete."
     },
     "b147f42abe01dfb5a84a3f176d780bf2b64955c5bf15757a6d789474c0189baf": {
       "last_emitted_at_ms": 1783612338778,
@@ -30,5 +30,5 @@
       "message": "Spawning agent: qa-analyzer (inherit) | Task: QA analyzer phase1 — Darkest Days Introduce PC"
     }
   },
-  "updated_at": "2026-07-09T15:57:42.448Z"
+  "updated_at": "2026-07-09T15:59:54.578Z"
 }
