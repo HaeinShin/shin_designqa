@@ -1,5 +1,0 @@
-{"t":0,"agent":"system","event":"skill_invoked","skill_name":"qa-watch"}
-{"t":0,"agent":"af4d730","agent_type":"qa-analyzer","event":"agent_start","parent_mode":"none"}
-{"t":0,"agent":"af4d730","agent_type":"qa-analyzer","event":"agent_stop","success":true,"duration_ms":219057}
-{"t":0,"agent":"a46c909","agent_type":"unknown","event":"agent_stop","success":true,"duration_ms":0}
-{"t":0,"agent":"a8ec3af","agent_type":"unknown","event":"agent_stop","success":true,"duration_ms":0}

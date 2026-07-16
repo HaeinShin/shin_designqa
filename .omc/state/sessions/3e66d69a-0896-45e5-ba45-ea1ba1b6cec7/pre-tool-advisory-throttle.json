@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "entries": {
+    "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
+      "last_emitted_at_ms": 1784016794748,
+      "message": "Read multiple files in parallel when possible for faster analysis."
+    },
+    "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
+      "last_emitted_at_ms": 1784016707817,
+      "message": "Verify changes work after editing. Test functionality before marking complete."
+    },
+    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
+      "last_emitted_at_ms": 1784016613703,
+      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
+    "5a6116ffbc9bfd00cecb9912085fb146921f7453e2c45dc335a13c8e0e3b0653": {
+      "last_emitted_at_ms": 1784016483012,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: 한게임포털 PC visual QA"
+    },
+    "cbd0512b5ff71103260eb399124e84240a2d95fecf8cae6e7b407a51a0df454a": {
+      "last_emitted_at_ms": 1784016000503,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: visual QA 비교 분석"
+    }
+  },
+  "updated_at": "2026-07-14T08:13:14.748Z"
+}
