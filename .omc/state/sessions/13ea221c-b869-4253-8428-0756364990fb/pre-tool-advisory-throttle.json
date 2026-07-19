@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "entries": {
+    "ba75b05bccb81df6ed491625674ff8eeaec588bb67ace1d80b01d40b63ca6801": {
+      "last_emitted_at_ms": 1784471524385,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: QA analyzer phase2 CSS — NAN2026"
+    },
+    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
+      "last_emitted_at_ms": 1784471510330,
+      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
+    "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
+      "last_emitted_at_ms": 1784471488580,
+      "message": "Verify changes work after editing. Test functionality before marking complete."
+    },
+    "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
+      "last_emitted_at_ms": 1784471392694,
+      "message": "Read multiple files in parallel when possible for faster analysis."
+    },
+    "a5b23080cb60c9c7379d6f138fb8e82e1635b8236ec01dcaed90d6a2169b2f9c": {
+      "last_emitted_at_ms": 1784471032753,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: QA analyzer phase1 — NAN2026 랜딩"
+    },
+    "88ed7f7d1530d9408c972c4f8c7987b634fc366177da12e967ac864dd79d801e": {
+      "last_emitted_at_ms": 1784468333283,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: QA analyzer phase2 CSS"
+    },
+    "b72c1777391f925ce5109008d93d82c22291f14acc34faccb625833b82b46b29": {
+      "last_emitted_at_ms": 1784468069892,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: QA analyzer phase1"
+    }
+  },
+  "updated_at": "2026-07-19T14:32:04.385Z"
+}

@@ -33,7 +33,10 @@ Figma MCP는 **이 인터랙티브 세션에만** 연결돼 있으므로, 헤드
    - `status`가 `"running"`이면 → **아무 메시지도 출력하지 말고 조용히 종료한다.** (QA 진행 중 — 사용자에게 노이즈 방지. 하트비트는 이미 0단계에서 갱신됐으므로 런처 배지는 초록 유지)
    - `status`가 `"done"`이면 → 역시 아무것도 안 하고 조용히 종료한다.
 
-2. **선점(중복 실행 방지)** — `pending`이면 즉시 같은 파일을 `status: "running"`으로 덮어쓴다(Write). 그래야 다음 루프 틱이 같은 일감을 다시 잡지 않는다.
+2. **선점(중복 실행 방지)** — `pending`이면 즉시 아래 Bash 명령으로 `status: "running"`으로 덮어쓴다. **Write 도구 절대 금지** — Cursor IDE가 이 파일을 열어두면 Write 도구를 가로채 "Opened changes in Cursor / Save file to continue" diff 뷰를 띄워 자동 처리가 중단된다. Bash node 명령은 Cursor가 가로채지 않는다.
+   ```bash
+   node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('reports/_qa_request.json','utf8'));d.status='running';fs.writeFileSync('reports/_qa_request.json',JSON.stringify(d,null,2))"
+   ```
    - 이전 phase2 결과가 남아있으면 제거: `rm -f reports/_qa_detail_ready.json` (Bash 실행, 실패해도 계속)
 
 3. **QA 실행** — 일감 JSON에서 `figmaUrl`/`webUrl`/`width`/`scale`/`mode`/`id`를 꺼내 **사용자에게 아무것도 묻지 않고** 아래 순서대로 직접 수행한다. design-qa의 **1단계(입력 수집)는 건너뛴다** — 입력은 이미 확보됐다.
@@ -86,7 +89,11 @@ Figma MCP는 **이 인터랙티브 세션에만** 연결돼 있으므로, 헤드
      - 성공: `{ "id": "<일감 id>", "status": "done", "report": "reports/qa-report.html" }`
      - 실패(캡처/ MCP 오류 등): `{ "id": "<일감 id>", "status": "error", "message": "<디자이너 친화 메시지>" }`
        - design-qa의 "결과 전달" 규칙대로 사람이 읽을 한국어 메시지로 번역한다(원문 exit 코드 금지).
-   - 그리고 `reports/_qa_request.json`의 `status`도 `done`(또는 `error`)으로 바꿔 마무리한다.
+   - `reports/_qa_request.json`의 `status`도 Bash node 명령으로 `done`(또는 `error`)으로 바꾼다(**Write 도구 사용 금지** — Cursor IDE 인터셉션 방지):
+     ```bash
+     node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('reports/_qa_request.json','utf8'));d.status='done';fs.writeFileSync('reports/_qa_request.json',JSON.stringify(d,null,2))"
+     ```
+     오류 시에는 `d.status='error'`로 대체한다.
    - **성공 시 리포트 자동 오픈** — 반드시 Bash로 실행(실패해도 계속):
      ```bash
      open "http://localhost:4567/reports/qa-report.html"

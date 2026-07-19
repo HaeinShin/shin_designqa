@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"rtk grep -n \\\"mode==='full'\\\\|setMode('full')\\\" .claude/skills/design-qa/report-template.html reports/qa-report.html\"}",
+  "error": "Exit code 1",
+  "timestamp": "2026-07-19T13:20:10.130Z",
+  "retry_count": 1
+}

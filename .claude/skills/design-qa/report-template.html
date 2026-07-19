@@ -253,7 +253,7 @@
     var figmaImg=visual.querySelector('img[src="figma.png"]');
     var levelEl=document.getElementById('zLevel');
     var segFit=visual.querySelector('[data-z="fit"]'), seg100=visual.querySelector('[data-z="100"]');
-    var natW=0, fitW=0, curW=0, mode='fit';
+    var natW=0, fitW=0, curW=0, mode='100';
     function paneW(){
       var p=visual.querySelector('.pane.active');
       var w=Math.max(200,((p&&p.clientWidth)||visual.clientWidth)-2);
@@ -264,7 +264,7 @@
     function label(){
       if(levelEl) levelEl.textContent = natW ? Math.round(curW/natW*100)+'%' : '맞춤';
       if(segFit) segFit.classList.toggle('on', mode==='fit');
-      if(seg100) seg100.classList.toggle('on', mode==='full');
+      if(seg100) seg100.classList.toggle('on', mode==='100');
     }
     function apply(w){
       curW=Math.max(140, Math.min((natW||360)*3, Math.round(w)));
@@ -275,19 +275,19 @@
     function setMode(m){
       mode=m;
       if(m==='fit'){ computeFit(); apply(fitW); }
-      else if(m==='full'){ apply(natW); }
+      else if(m==='100'){ apply(natW); }
     }
-    function init(){ natW=(figmaImg&&figmaImg.naturalWidth)||webImg.naturalWidth||360; setMode('fit'); }
+    function init(){ natW=(figmaImg&&figmaImg.naturalWidth)||webImg.naturalWidth||360; setMode('100'); }
     if(webImg && webImg.complete && webImg.naturalWidth) init();
     else if(webImg) webImg.addEventListener('load', init);
-    if(figmaImg && !figmaImg.complete) figmaImg.addEventListener('load',function(){ if(!natW||mode==='full'){ natW=figmaImg.naturalWidth||natW; apply(natW); }});
+    if(figmaImg && !figmaImg.complete) figmaImg.addEventListener('load',function(){ if(!natW||mode==='100'){ natW=figmaImg.naturalWidth||natW; apply(natW); }});
     visual.querySelectorAll('[data-z]').forEach(function(b){
       b.addEventListener('click',function(){
         var z=b.dataset.z;
         if(z==='in'){ mode='custom'; apply(curW*1.25); }
         else if(z==='out'){ mode='custom'; apply(curW*0.8); }
         else if(z==='fit'){ setMode('fit'); }
-        else if(z==='100'){ setMode('full'); }
+        else if(z==='100'){ setMode('100'); }
       });
     });
     window.addEventListener('resize',function(){ if(mode==='fit'){ computeFit(); apply(fitW); } });

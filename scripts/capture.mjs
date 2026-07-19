@@ -140,6 +140,18 @@ try {
   // 뷰포트 자체를 페이지 높이로 설정하면 스크롤 없이 전체가 한 번에 렌더된다.
   const fullH = Math.min(expand.height, 16000); // Chromium 캔버스 상한
   if (fullH > 900) {
+    // 뷰포트 확장 전에 100vh 요소를 현재 높이로 고정.
+    // setViewportSize 후 100vh가 재계산되어 hero 등이 fullH만큼 늘어나는 현상 방지.
+    await page.evaluate(() => {
+      const vh = window.innerHeight;
+      for (const el of document.querySelectorAll('*')) {
+        const cs = getComputedStyle(el);
+        if (Math.abs(parseFloat(cs.height) - vh) < 2)
+          el.style.setProperty('height', `${Math.round(vh)}px`, 'important');
+        if (Math.abs(parseFloat(cs.minHeight) - vh) < 2)
+          el.style.setProperty('min-height', `${Math.round(vh)}px`, 'important');
+      }
+    });
     await page.setViewportSize({ width, height: fullH });
     await page.waitForTimeout(200);
   }

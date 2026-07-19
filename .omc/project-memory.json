@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1784015550946,
+  "lastScanned": 1784465834194,
   "projectRoot": "/Users/nhn/Desktop/AI스터디/shin_designqa",
   "techStack": {
     "languages": [
@@ -57,7 +57,7 @@
       "path": "reports",
       "purpose": null,
       "fileCount": 11,
-      "lastAccessed": 1784015550872,
+      "lastAccessed": 1784465834136,
       "keyFiles": [
         "_loop_heartbeat.json",
         "_qa_request.json",
@@ -70,7 +70,7 @@
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 6,
-      "lastAccessed": 1784015550878,
+      "lastAccessed": 1784465834137,
       "keyFiles": [
         "capture.mjs",
         "icon-upload.svg",
@@ -83,92 +83,92 @@
   "hotPaths": [
     {
       "path": "reports/qa-report.html",
-      "accessCount": 13,
-      "lastAccessed": 1784016707988,
+      "accessCount": 17,
+      "lastAccessed": 1784471488732,
       "type": "file"
     },
     {
       "path": "reports/figma-meta.xml",
-      "accessCount": 11,
-      "lastAccessed": 1784016494533,
-      "type": "file"
-    },
-    {
-      "path": ".claude/settings.json",
-      "accessCount": 9,
-      "lastAccessed": 1784016804498,
-      "type": "file"
-    },
-    {
-      "path": "reports/web-styles.json",
-      "accessCount": 7,
-      "lastAccessed": 1783612344988,
+      "accessCount": 10,
+      "lastAccessed": 1784471528473,
       "type": "file"
     },
     {
       "path": "reports/_qa_request.json",
-      "accessCount": 7,
-      "lastAccessed": 1783921831193,
+      "accessCount": 9,
+      "lastAccessed": 1784466562070,
       "type": "file"
     },
     {
       "path": ".claude/skills/design-qa/report-template.html",
-      "accessCount": 7,
-      "lastAccessed": 1784016505066,
-      "type": "file"
-    },
-    {
-      "path": "reports/figma.png",
-      "accessCount": 6,
-      "lastAccessed": 1784016494895,
+      "accessCount": 9,
+      "lastAccessed": 1784471039088,
       "type": "file"
     },
     {
       "path": "reports/web.png",
-      "accessCount": 6,
-      "lastAccessed": 1784016495589,
+      "accessCount": 5,
+      "lastAccessed": 1784471039783,
       "type": "file"
     },
     {
       "path": ".claude/skills/qa-watch/SKILL.md",
-      "accessCount": 5,
-      "lastAccessed": 1783918341399,
+      "accessCount": 4,
+      "lastAccessed": 1784467041752,
       "type": "file"
     },
     {
-      "path": "scripts/publish.sh",
-      "accessCount": 3,
-      "lastAccessed": 1783589944017,
-      "type": "file"
-    },
-    {
-      "path": "reports/figma-code.txt",
-      "accessCount": 3,
-      "lastAccessed": 1783612343399,
+      "path": "reports/figma.png",
+      "accessCount": 4,
+      "lastAccessed": 1784471039697,
       "type": "file"
     },
     {
       "path": "scripts/capture.mjs",
-      "accessCount": 2,
-      "lastAccessed": 1783588101577,
+      "accessCount": 3,
+      "lastAccessed": 1784470743655,
       "type": "file"
     },
     {
       "path": "reports/figma-tokens.json",
+      "accessCount": 3,
+      "lastAccessed": 1784471528878,
+      "type": "file"
+    },
+    {
+      "path": "reports/figma-code.txt",
       "accessCount": 2,
-      "lastAccessed": 1783612344375,
+      "lastAccessed": 1784471528321,
+      "type": "file"
+    },
+    {
+      "path": "reports/web-styles.json",
+      "accessCount": 2,
+      "lastAccessed": 1784471529789,
+      "type": "file"
+    },
+    {
+      "path": ".claude/settings.json",
+      "accessCount": 1,
+      "lastAccessed": 1784466739351,
       "type": "file"
     },
     {
       "path": ".claude/agents/qa-analyzer.md",
       "accessCount": 1,
-      "lastAccessed": 1783612129883,
+      "lastAccessed": 1784466960345,
       "type": "file"
     },
     {
       "path": "scripts/qa-server.mjs",
       "accessCount": 1,
-      "lastAccessed": 1784016326999,
+      "lastAccessed": 1784467042563,
+      "type": "file"
+    },
+    {
+      "path": "scripts/launcher.html",
+      "accessCount": 1,
+      "lastAccessed": 1784467118890,
       "type": "file"
     }
   ],
