@@ -54,7 +54,10 @@
       "Bash(echo *)",
       "Bash([ * ])",
       "Bash([ -f * ] && * || *)",
-      "Bash([ -f * ] && echo * || echo *)"
+      "Bash([ -f * ] && echo * || echo *)",
+      "Bash(rtk read *)",
+      "Bash(sleep * && rtk read *)",
+      "Bash(sleep * && cat *)"
     ]
   }
 }

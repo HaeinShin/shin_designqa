@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "entries": {
+    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
+      "last_emitted_at_ms": 1784611469820,
+      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
+    "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
+      "last_emitted_at_ms": 1784610916782,
+      "message": "Verify changes work after editing. Test functionality before marking complete."
+    },
+    "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
+      "last_emitted_at_ms": 1784610813046,
+      "message": "Read multiple files in parallel when possible for faster analysis."
+    },
+    "3ba0801bf59271578d01e919496cb1798fbf0cdfa843ad3c2b5658d90622d8e5": {
+      "last_emitted_at_ms": 1784610729369,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: QA phase2 — 바로구매창 CSS 분석"
+    },
+    "0d2634e997f82fc8e30a9cba8b260a31f0a61a3786c600ffec0c46e13e7e0648": {
+      "last_emitted_at_ms": 1784610464896,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: QA phase1 — 바로구매창 이미지 비교 리포트"
+    },
+    "77bdb90acf140deb6cd24b39cdd814c5a634735c6bba54f0b464c8211c85056b": {
+      "last_emitted_at_ms": 1784608595596,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: QA phase2 — CSS 상세 분석"
+    },
+    "ad40d4305116d28bbe338f888d6a3408e4b09f2694eecf19448f9530369686ce": {
+      "last_emitted_at_ms": 1784608341948,
+      "message": "Spawning agent: qa-analyzer (inherit) | Task: QA phase1 — 이미지 비교 리포트"
+    }
+  },
+  "updated_at": "2026-07-21T05:24:29.820Z"
+}

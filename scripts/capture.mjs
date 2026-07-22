@@ -38,6 +38,20 @@ try {
     deviceScaleFactor: scale, // QA용 선명한 캡처
   });
 
+  // IntersectionObserver 패치: "진입(isIntersecting=true)" 콜백만 전달하고 "이탈" 콜백은 차단한다.
+  // 이렇게 하면 스크롤 중 한번 visible 상태가 된 요소는 scroll-back 이후에도 visible로 유지된다.
+  await page.addInitScript(() => {
+    const _IO = window.IntersectionObserver;
+    window.IntersectionObserver = class extends _IO {
+      constructor(callback, options) {
+        super((entries, observer) => {
+          const entering = entries.filter(e => e.isIntersecting);
+          if (entering.length > 0) callback(entering, observer);
+        }, options);
+      }
+    };
+  });
+
   // load 이벤트까지 대기(이미지/CSS 포함). HMR 웹소켓이 있어도 load는 발생하므로 안 걸림.
   const response = await page.goto(url, { waitUntil: 'load', timeout: 30000 });
   if (response && !response.ok()) {
@@ -90,79 +104,98 @@ try {
     window.scrollTo(0, 0);
   });
 
-  // 애니메이션/트랜지션 정지로 캡처 안정화
-  await page.addStyleTag({
-    content: `*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}`,
-  });
   // 폰트 로딩 완료 대기 (FontFaceSet은 직렬화 불가 → boolean 반환)
   await page.evaluate(() => (document.fonts ? document.fonts.ready.then(() => true) : true));
   await page.waitForTimeout(300);
 
-  // 내부 스크롤 컨테이너 "펼치기": fullPage가 상단만 찍는 문제 해결.
-  // 모바일 웹뷰형 페이지는 내부 div가 스크롤되어 body 높이가 viewport 한 칸뿐 → fullPage가 잘린다.
-  // html/body 잠금을 풀고, "흐름에 있는" 페이지 스크롤러만 펼친다.
-  // ⚠️ position:fixed/absolute 요소(고정 헤더·메뉴 서랍·모달)는 건드리지 않는다.
-  //    이를 흐름에 끼워 넣으면(예: fixed nav → relative) 콘텐츠와 푸터 사이에 빈 영역이 생겨 캡처가 깨진다.
-  const expand = await page.evaluate(() => {
-    const vh = window.innerHeight;
-    const imp = (el, prop, val) => el.style.setProperty(prop, val, 'important');
-    // html/body 의 높이·overflow 잠금 해제 (대부분의 웹뷰형 페이지는 이것만으로 전체가 펼쳐진다)
-    for (const el of [document.documentElement, document.body]) {
-      imp(el, 'height', 'auto');
-      imp(el, 'min-height', '0');
-      imp(el, 'max-height', 'none');
-      imp(el, 'overflow', 'visible');
-    }
-    let count = 0;
-    for (const el of document.querySelectorAll('*')) {
-      const cs = getComputedStyle(el);
-      const inFlow = cs.position === 'static' || cs.position === 'relative' || cs.position === 'sticky';
-      const isScroller =
-        inFlow &&
-        /(auto|scroll|overlay)/.test(cs.overflowY) &&
-        el.scrollHeight > el.clientHeight + 50 &&
-        el.clientHeight >= vh * 0.5;
-      if (!isScroller) continue;
-      imp(el, 'height', 'auto');
-      imp(el, 'max-height', 'none');
-      imp(el, 'overflow', 'visible');
-      count += 1;
-    }
-    void document.body.offsetHeight; // 강제 리플로우
-    return { expanded: count, height: document.documentElement.scrollHeight };
+  // scroll-event 기반 visibility는 fullPage 단일 캡처로 정확히 재현 불가.
+  // 각 스크롤 위치에서 viewport를 찍어 Canvas로 이어붙이면 scroll 애니메이션이 그대로 반영된다.
+  const totalH = await page.evaluate(() =>
+    Math.max(document.documentElement.scrollHeight, document.body?.scrollHeight || 0)
+  );
+  const viewH = page.viewportSize()?.height || 900;
+
+  // 맨 위로 이동 후 한 viewport씩 캡처
+  await page.evaluate(() => {
+    if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+    else window.scrollTo(0, 0);
   });
-  if (expand.expanded > 0) {
-    await page.waitForTimeout(300); // 리플로우/지연 이미지 안정화
+  await page.waitForTimeout(200);
+
+  const shots = [];
+  for (let y = 0; y < totalH; y += viewH) {
+    await page.evaluate((scrollY) => {
+      if (document.scrollingElement) document.scrollingElement.scrollTop = scrollY;
+      else window.scrollTo(0, scrollY);
+    }, y);
+    await page.waitForTimeout(300); // scroll 이벤트 + 애니메이션 settle
+
+    // 첫 번째 shot 이외에는 fixed/sticky 요소(고정 헤더 등)를 일시 숨김.
+    // 이어붙일 때 헤더가 반복 노출되는 현상을 방지한다.
+    if (y > 0) {
+      await page.evaluate(() => {
+        window.__hiddenFixed = [];
+        for (const el of document.querySelectorAll('*')) {
+          const pos = getComputedStyle(el).position;
+          if (pos === 'fixed' || pos === 'sticky') {
+            window.__hiddenFixed.push({ el, vis: el.style.visibility });
+            el.style.setProperty('visibility', 'hidden', 'important');
+          }
+        }
+      });
+    }
+
+    const buf = await page.screenshot({ type: 'png' });
+    shots.push({ y, b64: buf.toString('base64') });
+
+    // fixed/sticky 요소 복원
+    if (y > 0) {
+      await page.evaluate(() => {
+        for (const { el, vis } of (window.__hiddenFixed || [])) {
+          if (vis) el.style.visibility = vis;
+          else el.style.removeProperty('visibility');
+        }
+        window.__hiddenFixed = [];
+      });
+    }
   }
 
-  // 뷰포트를 페이지 전체 높이로 늘려 스크롤 라이브러리(Lenis 등) 우회.
-  // fullPage:true 는 스크롤하며 이어붙이는 방식이라 scroll-hijack 사이트에서 하단이 잘린다.
-  // 뷰포트 자체를 페이지 높이로 설정하면 스크롤 없이 전체가 한 번에 렌더된다.
-  const fullH = Math.min(expand.height, 16000); // Chromium 캔버스 상한
-  if (fullH > 900) {
-    // 뷰포트 확장 전에 100vh 요소를 현재 높이로 고정.
-    // setViewportSize 후 100vh가 재계산되어 hero 등이 fullH만큼 늘어나는 현상 방지.
-    await page.evaluate(() => {
-      const vh = window.innerHeight;
-      for (const el of document.querySelectorAll('*')) {
-        const cs = getComputedStyle(el);
-        if (Math.abs(parseFloat(cs.height) - vh) < 2)
-          el.style.setProperty('height', `${Math.round(vh)}px`, 'important');
-        if (Math.abs(parseFloat(cs.minHeight) - vh) < 2)
-          el.style.setProperty('min-height', `${Math.round(vh)}px`, 'important');
-      }
+  // 새 페이지의 Canvas API로 조각들을 이어붙여 전체 페이지 PNG 생성 (외부 의존성 없음)
+  const stitchPage = await browser.newPage({ viewport: { width, height: 600 } });
+  await stitchPage.setContent('<!DOCTYPE html><html><body style="margin:0;padding:0"><canvas id="c"></canvas></body></html>');
+  const pngB64 = await stitchPage.evaluate(async ({ shots, totalH, w, viewH }) => {
+    const canvas = document.getElementById('c');
+    canvas.width = w;
+    canvas.height = totalH;
+    const ctx = canvas.getContext('2d');
+    const loadImg = (b64) => new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () => res(img);
+      img.onerror = rej;
+      img.src = 'data:image/png;base64,' + b64;
     });
-    await page.setViewportSize({ width, height: fullH });
-    await page.waitForTimeout(200);
-  }
-
-  await page.screenshot({ path: `${outPrefix}.png`, fullPage: true });
+    for (const { y, b64 } of shots) {
+      const img = await loadImg(b64);
+      const drawH = Math.min(viewH, totalH - y);
+      ctx.drawImage(img, 0, 0, w, drawH, 0, y, w, drawH);
+    }
+    return canvas.toDataURL('image/png').replace('data:image/png;base64,', '');
+  }, { shots, totalH, w: width, viewH });
+  await stitchPage.close();
+  writeFileSync(`${outPrefix}.png`, Buffer.from(pngB64, 'base64'));
 
   if (visualOnly) {
     await browser.close();
-    console.log(`captured: ${outPrefix}.png (visual-only) · 전체 높이 ${expand.height}px`);
+    console.log(`captured: ${outPrefix}.png (visual-only) · 전체 높이 ${totalH}px · ${shots.length}조각 스티칭`);
     process.exit(0);
   }
+
+  // 스타일 캡처를 위해 맨 위로 복귀
+  await page.evaluate(() => {
+    if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(200);
 
   // 비교에 의미 있는 요소만 computed style 추출
   const data = await page.evaluate((MAX) => {
@@ -228,10 +261,7 @@ try {
   const note = data.truncated
     ? ` (요소 ${data.totalFound}개 중 상위 ${MAX_ELEMENTS}개만 기록 — 잘림)`
     : '';
-  const expandNote = expand.expanded > 0
-    ? ` · 내부 스크롤 컨테이너 ${expand.expanded}개 펼침(전체 높이 ${expand.height}px)`
-    : ` · 전체 높이 ${expand.height}px`;
-  console.log(`captured: ${outPrefix}.png + ${outPrefix}-styles.json — ${data.elements.length} elements${note}${expandNote}`);
+  console.log(`captured: ${outPrefix}.png + ${outPrefix}-styles.json — ${data.elements.length} elements${note} · 전체 높이 ${totalH}px · ${shots.length}조각 스티칭`);
 } catch (e) {
   await browser?.close().catch(() => {});
   const msg = String(e?.message || e);

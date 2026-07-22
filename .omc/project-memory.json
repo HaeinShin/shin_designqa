@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1784465834194,
+  "lastScanned": 1784710863593,
   "projectRoot": "/Users/nhn/Desktop/AI스터디/shin_designqa",
   "techStack": {
     "languages": [
@@ -56,21 +56,21 @@
     "reports": {
       "path": "reports",
       "purpose": null,
-      "fileCount": 11,
-      "lastAccessed": 1784465834136,
+      "fileCount": 12,
+      "lastAccessed": 1784710863511,
       "keyFiles": [
         "_loop_heartbeat.json",
+        "_qa_detail_ready.json",
         "_qa_request.json",
         "_qa_result.json",
-        "figma-code.txt",
-        "figma-meta.xml"
+        "figma-code.txt"
       ]
     },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 6,
-      "lastAccessed": 1784465834137,
+      "lastAccessed": 1784710863513,
       "keyFiles": [
         "capture.mjs",
         "icon-upload.svg",
@@ -83,14 +83,26 @@
   "hotPaths": [
     {
       "path": "reports/qa-report.html",
-      "accessCount": 17,
-      "lastAccessed": 1784471488732,
+      "accessCount": 21,
+      "lastAccessed": 1784610701124,
+      "type": "file"
+    },
+    {
+      "path": "scripts/capture.mjs",
+      "accessCount": 19,
+      "lastAccessed": 1784510508876,
       "type": "file"
     },
     {
       "path": "reports/figma-meta.xml",
-      "accessCount": 10,
-      "lastAccessed": 1784471528473,
+      "accessCount": 16,
+      "lastAccessed": 1784610734182,
+      "type": "file"
+    },
+    {
+      "path": ".claude/skills/design-qa/report-template.html",
+      "accessCount": 11,
+      "lastAccessed": 1784610489475,
       "type": "file"
     },
     {
@@ -100,15 +112,27 @@
       "type": "file"
     },
     {
-      "path": ".claude/skills/design-qa/report-template.html",
-      "accessCount": 9,
-      "lastAccessed": 1784471039088,
+      "path": "reports/web.png",
+      "accessCount": 7,
+      "lastAccessed": 1784610483168,
       "type": "file"
     },
     {
-      "path": "reports/web.png",
+      "path": "reports/figma-tokens.json",
+      "accessCount": 7,
+      "lastAccessed": 1784610734578,
+      "type": "file"
+    },
+    {
+      "path": "reports/figma.png",
+      "accessCount": 6,
+      "lastAccessed": 1784610483096,
+      "type": "file"
+    },
+    {
+      "path": "reports/figma-code.txt",
       "accessCount": 5,
-      "lastAccessed": 1784471039783,
+      "lastAccessed": 1784610733726,
       "type": "file"
     },
     {
@@ -118,39 +142,21 @@
       "type": "file"
     },
     {
-      "path": "reports/figma.png",
-      "accessCount": 4,
-      "lastAccessed": 1784471039697,
-      "type": "file"
-    },
-    {
-      "path": "scripts/capture.mjs",
-      "accessCount": 3,
-      "lastAccessed": 1784470743655,
-      "type": "file"
-    },
-    {
-      "path": "reports/figma-tokens.json",
-      "accessCount": 3,
-      "lastAccessed": 1784471528878,
-      "type": "file"
-    },
-    {
-      "path": "reports/figma-code.txt",
-      "accessCount": 2,
-      "lastAccessed": 1784471528321,
-      "type": "file"
-    },
-    {
       "path": "reports/web-styles.json",
-      "accessCount": 2,
-      "lastAccessed": 1784471529789,
+      "accessCount": 4,
+      "lastAccessed": 1784610735244,
       "type": "file"
     },
     {
       "path": ".claude/settings.json",
-      "accessCount": 1,
-      "lastAccessed": 1784466739351,
+      "accessCount": 3,
+      "lastAccessed": 1784608077425,
+      "type": "file"
+    },
+    {
+      "path": "reports/test_scroll.png",
+      "accessCount": 2,
+      "lastAccessed": 1784509485247,
       "type": "file"
     },
     {
@@ -169,6 +175,60 @@
       "path": "scripts/launcher.html",
       "accessCount": 1,
       "lastAccessed": 1784467118890,
+      "type": "file"
+    },
+    {
+      "path": "reports/test_simple.png",
+      "accessCount": 1,
+      "lastAccessed": 1784509637098,
+      "type": "file"
+    },
+    {
+      "path": "reports/test_bottom.png",
+      "accessCount": 1,
+      "lastAccessed": 1784509723687,
+      "type": "file"
+    },
+    {
+      "path": "reports/test_y900.png",
+      "accessCount": 1,
+      "lastAccessed": 1784509822989,
+      "type": "file"
+    },
+    {
+      "path": "reports/test_io.png",
+      "accessCount": 1,
+      "lastAccessed": 1784509888767,
+      "type": "file"
+    },
+    {
+      "path": "reports/test_io2.png",
+      "accessCount": 1,
+      "lastAccessed": 1784510047897,
+      "type": "file"
+    },
+    {
+      "path": "reports/test_patch.png",
+      "accessCount": 1,
+      "lastAccessed": 1784510158772,
+      "type": "file"
+    },
+    {
+      "path": "reports/test_stitch.png",
+      "accessCount": 1,
+      "lastAccessed": 1784510412372,
+      "type": "file"
+    },
+    {
+      "path": "reports/test_stitch2.png",
+      "accessCount": 1,
+      "lastAccessed": 1784510467791,
+      "type": "file"
+    },
+    {
+      "path": "reports/test_normal.png",
+      "accessCount": 1,
+      "lastAccessed": 1784538284820,
       "type": "file"
     }
   ],
